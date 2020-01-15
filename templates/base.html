@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {% block title %}
+    <title>MyFreends</title>
+    {% endblock title %}
+
+</head>
+
+<body>
+
+    {% if user.is_authenticated %}
+    <ul id="slide-out" class="sidenav sidenav-fixed">
+        <li>
+            <div class="user-view">
+                <div class="background">
+                    <img src="images/office.jpg">
+                </div>
+                <a href="{% url 'profile' %}">
+                    <img class="circle" src="images/yuna.jpg">
+                    <span class="name">John Doe</span>
+                </a>
+            </div>
+        </li>
+        <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+        <li><a href="#!">Second Link</a></li>
+        <li><a class="subheader">Subheader</a></li>
+        <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+        <li><div class="divider"></div></li>
+
+        {% if user.is_staff %}
+            <li><a href="/admin/">Администрация</a></li>  
+        {% endif %}
+        
+        <li><a href="{% url 'logout' %}">Выйти</a></li>
+    </ul>
+    <a class="sidenav-trigger" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    {% endif %}
+
+    {% block content %}
+    {% endblock content %}
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
+    <script src="{% static 'js/materialize.jquery.js' %}"></script>
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+</body>
+
+</html>
