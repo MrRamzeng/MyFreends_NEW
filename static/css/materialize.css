@@ -9,7 +9,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #e4e2e2;
+    background-image: url('../images/authBackground.png');
 }
 
 /**
@@ -3727,7 +3727,7 @@ body.keyboard-focused .dropdown-content li:focus {
 }
 
 .sidenav {
-    background-image: url('../images/navbar1.png');
+    background-image: url('../images/navbar.png');
     box-shadow: 1px 0 15px 2px;
 }
 
@@ -6573,32 +6573,34 @@ input[type=range]::-ms-thumb {
 /*           */
 /* My styles */
 /*           */
-#login-form.row {
+#login-form {
     margin: 0;
 }
 
-#login-form > .col.s12 {
+#login-form > .s12 {
     background-position: center;
     background-size: cover;
-    position: relative;
     height: 100vh;
     background-image: url('../images/loginImage.jpeg');
-}
-
-#login-form .s12 {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #login-form form {
-    border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.6);
-    min-width: 325px;
-    width: 500px;
+    border-radius: 5px;
+    width: 25vw;
     padding: 20px;
 }
 
 #login-form form, #login-form label, #login-form input {
     color: #c0c0c0;
+}
+
+@media (max-width: 425px) {
+    #login-form form {
+        width: 100vw;
+        height: 100vh;
+    }
 }

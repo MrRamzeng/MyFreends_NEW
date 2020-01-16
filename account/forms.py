@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 
 UserModel = get_user_model()
 
-class AuthForm(AuthenticationForm):
+class SigninForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -77,3 +77,5 @@ class AuthForm(AuthenticationForm):
             code='invalid_login',
             params={'username': self.username_field.verbose_name},
         )
+
+

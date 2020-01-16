@@ -5,13 +5,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, resolve_url
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic.edit import FormView
 
 from MyFreends import settings
-from account.forms import AuthForm
+from account.forms import SigninForm
 
 
 class SuccessURLAllowedHostsMixin:
@@ -22,10 +23,10 @@ class SuccessURLAllowedHostsMixin:
 
 
 class LoginView(SuccessURLAllowedHostsMixin, FormView):
-    form_class = AuthForm
-    authentication_form = None
+    form_class = SigninForm
+    authentication_form = SigninForm
     redirect_field_name = REDIRECT_FIELD_NAME
-    template_name = 'registration/auth.html'
+    template_name = 'registration/signin.html'
     redirect_authenticated_user = False
     extra_context = None
 
