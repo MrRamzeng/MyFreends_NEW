@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div id="auth_container" class="row">
+    <div class="s12" style="background-image: url('{% static 'images/signupImage.jpg' %}');">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col s12"><h5 class="center">Регистрация</h5></div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    {{ form.email }}
+                    <label for="signup_email">Адрес электронной почты</label>
+                    
+                    {% if form.email.errors %}
+                    <div class="error-container">
+                        <span class="helper-text">Адрес уже используется</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="input-field col s6">
+                    {{ form.username }}
+                    <label for="signup_username">Имя пользователя</label>
+                    
+                    {% if form.username.errors %}
+                    <div class="error-container">
+                        <span class="helper-text">Логин занят</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    {{ form.first_name }}
+                    <label for="signup_f_name">Имя</label>
+                </div>
+
+                <div class="input-field col s6">
+                    {{ form.last_name }}
+                    <label for="signup_L_name">Фамилия</label>
+                </div>
+            </div>
+
+            <div class="row {% if form.password2.errors %} m-b-0 {% endif %}">
+                <div class="input-field col s6 {% if form.password2.errors %} m-b-0 {% endif %}">
+                    {{ form.password1 }}
+                    <label for="signup_pass_1">Пароль</label>
+                </div>
+
+                <div class="input-field col s6 {% if form.password2.errors %} m-b-0 {% endif %}">
+                    {{ form.password2 }}
+                    <label for="signup_pass_2">Повторите пароль</label>
+                </div>
+            </div>
+            
+            {% if form.password2.errors %}
+            <div class="row">
+                <div class="input-field col s12 error-container" style="margin: 0">
+                    <span class="helper-text">Пароли не совпадают</span>
+                </div>
+            </div>
+            {% endif %}
+                
+            <div class="row">
+                <div class="col s6 center">
+                    <button class="waves-effect btn" type="submit">Зарегистрироваться</button>
+                </div>
+                
+                <div class="col s6">
+                    <p>Уже <a href="{% url 'signin' %}">зарегистрированы?</a></p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+</style>
+{% endblock content %}

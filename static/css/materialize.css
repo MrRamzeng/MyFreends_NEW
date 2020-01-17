@@ -6573,33 +6573,46 @@ input[type=range]::-ms-thumb {
 /*           */
 /* My styles */
 /*           */
-#login-form {
+#auth_container {
     margin: 0;
 }
 
-#login-form > .s12 {
+#auth_container > .s12 {
     background-position: center;
     background-size: cover;
     height: 100vh;
-    background-image: url('../images/loginImage.jpeg');
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#login-form form {
+#auth_container form {
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 5px;
     width: 25vw;
     padding: 20px;
 }
 
-#login-form form, #login-form label, #login-form input {
+#auth_container form, #auth_container label, #auth_container input {
     color: #c0c0c0;
 }
 
+#auth_container .helper-text {
+    color: #ce0000;
+}
+
+.error-container .helper-text {
+    border-radius: 3px;
+    padding: 0 0.75rem;
+    border: 1px solid #dd0000;
+}
+
+.m-b-0 {
+    margin-bottom: 0;
+}
+
 @media (max-width: 425px) {
-    #login-form form {
+    #auth_container form {
         width: 100vw;
         height: 100vh;
     }

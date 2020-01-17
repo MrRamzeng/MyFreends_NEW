@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+
+{% endblock title %}
+
+{% block content %}
+<p class="success">Для подтверждения регистрации на ваш электронный адрес выслано письмо с подтверждением.</p>
+Cтраница авторизации откроется через: <b><span id="time"></span></b>
+<script type="text/javascript">
+	var i = 5;//время в сек.
+	function time() {
+		document.getElementById("time").innerHTML = i;//визуальный счетчик
+		i--;//уменьшение счетчика
+		if (i < 0) location.href = "{% url 'signin' %}";//редирект
+	}
+	time();
+	setInterval(time, 1000);
+</script>
+{% endblock content %}

@@ -1,9 +1,10 @@
 from django import forms
-from account.models import Account
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
+
+from account.models import Account
 
 UserModel = get_user_model()
 
@@ -11,7 +12,8 @@ class SigninForm(AuthenticationForm):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
-                'required': True, 'class': 'validate', 'type': 'email',
+                'id': 'signin_email', 'class': 'validate', 'type': 'email',
+                'name': 'signin_email', 'required': True,
                 'onkeyup': 'this.value = this.value.toLowerCase();',
             }
         )
@@ -19,16 +21,13 @@ class SigninForm(AuthenticationForm):
     password = forms.CharField(
         label=_("Password"), strip=False, min_length=8,
         widget=forms.PasswordInput(
-            attrs={'required': True, 'class': 'validate', 'type': 'password'}
+            attrs={
+                'id': 'signin_password', 'class': 'validate',
+                'type': 'password', 'name': 'signin_password',
+                'required': True,
+            }
         ),
     )
-    error_messages = {
-        'invalid_login': _(
-            "Please enter a correct %(username)s and password. Note that both "
-            "fields may be case-sensitive."
-        ),
-        'inactive': _("This account is inactive."),
-    }
 
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
@@ -61,21 +60,61 @@ class SigninForm(AuthenticationForm):
 
         return self.cleaned_data
 
-    def confirm_login_allowed(self, user):
-        if not user.is_active:
-            raise forms.ValidationError(
-                self.error_messages['inactive'],
-                code='inactive',
-            )
-
     def get_user(self):
         return self.user_cache
 
-    def get_invalid_login_error(self):
-        return forms.ValidationError(
-            self.error_messages['invalid_login'],
-            code='invalid_login',
-            params={'username': self.username_field.verbose_name},
+
+class SignupForm(UserCreationForm):
+    password1 = forms.CharField(
+        label=_('Password'), min_length=8,
+        widget=forms.PasswordInput(
+            attrs={
+                'id': 'signup_password1', 'class': 'validate', 
+                'type': 'password', 'name': 'signup_password1',
+                'required': True
+            }
         )
+    )
+    password2 = forms.CharField(
+        label=_('Repeat please the password'), min_length=8,
+        widget=forms.PasswordInput(
+            attrs={
+                'id': 'signup_password2', 'class': 'validate',
+                'type': 'password', 'name': 'signup_password2',
+                'required': True
+            }
+        )
+    )
 
-
+    class Meta:
+        model = Account
+        fields = (
+            'email', 'username', 'first_name', 'last_name', 'password1', 'password2'
+        )
+        widgets = {
+            'email': forms.TextInput(
+                attrs={
+                    'required': True, 'class': 'validate', 'type': 'email',
+                    'onkeyup': 'this.value = this.value.toLowerCase();',
+                }
+            ),
+            'username': forms.TextInput(
+                attrs={
+                    'id': 'signup_username', 'class': 'validate',
+                    'type': 'text', 'name': 'signup_username',
+                    'required': True
+                }
+            ),
+            'first_name': forms.TextInput(
+                attrs={
+                    'required': True, 'class': 'validate',
+                    'pattern': '^[A-Za-zА-Яа-я]+$'
+                }
+            ),
+            'last_name': forms.TextInput(
+                attrs={
+                    'required': True, 'class': 'validate',
+                    'pattern': '^[A-Za-zА-Яа-я]+$'
+                }
+            )
+        }

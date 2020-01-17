@@ -1,0 +1,10 @@
+{% autoescape off %}
+Здравствуйте, {{ user.first_name }}!
+Ваша учетная запись зарегистрирована на сайте {{ domain }}.
+Для подтверждения регистрации перейдите по ссылке ниже.
+
+{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+
+С уважением администрация MyFreends!
+{% endautoescape %}

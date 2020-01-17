@@ -2,24 +2,35 @@
 {% load static %}
 
 {% block content %}
-<div id="login-form" class="row">
-    <div class="s12">
+<div id="auth_container" class="row">
+    <div class="s12" style="background-image: url('{% static 'images/signinImage.jpeg' %}');">
         <form method="POST">
             {% csrf_token %}
             <div class="row">
-                <div class="col s12"><h5 class="center">Авторизация</h5></div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    {{ form.username }}
-                    <label for="id_username">Адрес электронной почты</label>
+                <div class="col s12">
+                    <h5 class="center">Авторизация</h5>
                 </div>
             </div>
+
+            <div class="row m-b-0">
+                <div class="input-field col s12 {% if form.errors %} m-b-0 {% endif %}">
+                    {{ form.username }}
+                    <label for="signin_email">Адрес электронной почты</label>
+                </div>
+            </div>
+            
+            {% if form.errors %}
+            <div class="row">
+                <div class="input-field col s12 error-container" style="margin: 0;">
+                    <span class="helper-text">Неверный адрес электронной почты или пароль.</span>
+                </div>
+            </div>
+            {% endif %}
 
             <div class="row">
                 <div class="input-field col s12">
                     {{ form.password }}
-                    <label for="id_password">Пароль</label>
+                    <label for="signin_password">Пароль</label>
                 </div>
             </div>
 
@@ -27,11 +38,12 @@
                 <div class="col s6 center">
                     <button class="waves-effect btn" type="submit">Войти</button>
                 </div>
-                
+
                 <div class="col s6">
-                    <p>Ещё не <a href="#signup">зарегистрированы?</a></p>
+                    <p>Ещё не <a href="{% url 'signup' %}">зарегистрированы?</a></p>
                 </div>
             </div>
+
             <div class="row">
                 <div class="s12 center">
                     <a href="#">Забыли пароль?</a>
@@ -40,4 +52,20 @@
         </form>
     </div>
 </div>
+<style>
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    {% if not form.password2.errors %}
+    .error-container {
+        margin: 1rem 0;
+    }
+    {% else %}
+    .error-container {
+        margin 0;
+    }
+    {% endif %}
+</style>
 {% endblock content %}
