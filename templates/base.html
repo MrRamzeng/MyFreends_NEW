@@ -2,18 +2,18 @@
 <html>
 {% load static %}
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>
+        {% block title %}
+        MyFreends
+        {% endblock title %}
+    </title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.0.min.js"></script>
-    
-    {% block title %}
-    <title>MyFreends</title>
-    {% endblock title %}
 
 </head>
 

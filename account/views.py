@@ -143,6 +143,6 @@ def activate(request, uidb64, token):
         return HttpResponse(_('Link is not valid!'))
 
 
-@login_required(login_url='auth')
+@login_required(login_url='signin')
 def profile(request):
     return render(request, 'profile.html')

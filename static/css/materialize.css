@@ -1288,7 +1288,7 @@ table span.badge {
 }
 
 .container {
-    margin: 0 auto;
+    margin: 0;
     max-width: 1280px;
     width: 90%;
 }
@@ -2130,7 +2130,7 @@ table span.badge {
 
 nav {
     color: #fff;
-    background-image: url('../images/navbar.png');
+    background-image: url('../images/background.png');
     background-size: 100vw calc(100vh - (100vh - 50px));
     width: 100vw;
     height: 50px;
@@ -3015,7 +3015,7 @@ small {
 
 .btn, .btn-large, .btn-small, .btn-flat {
     border: none;
-    border-radius: 2px;
+    border-radius: 10px;
     display: inline-block;
     height: 36px;
     line-height: 36px;
@@ -3727,7 +3727,7 @@ body.keyboard-focused .dropdown-content li:focus {
 }
 
 .sidenav {
-    background-image: url('../images/navbar.png');
+    background-image: url('../images/background.png');
     box-shadow: 1px 0 15px 2px;
 }
 
@@ -6575,21 +6575,20 @@ input[type=range]::-ms-thumb {
 /*           */
 #auth_container {
     margin: 0;
-}
-
-#auth_container > .s12 {
-    background-position: center;
-    background-size: cover;
-    height: 100vh;
+    width: 100vw;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-position: center;
+    background-size: cover;
+    position: relative;
 }
 
 #auth_container form {
     background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 5px;
-    width: 25vw;
+    border-radius: 10px;
+    width: 30vw;
     padding: 20px;
 }
 
@@ -6599,12 +6598,13 @@ input[type=range]::-ms-thumb {
 
 #auth_container .helper-text {
     color: #ce0000;
-}
-
-.error-container .helper-text {
-    border-radius: 3px;
+    border-radius: 5px;
     padding: 0 0.75rem;
     border: 1px solid #dd0000;
+}
+
+.error-container {
+    margin: 0;
 }
 
 .m-b-0 {
@@ -6614,6 +6614,12 @@ input[type=range]::-ms-thumb {
 @media (max-width: 425px) {
     #auth_container form {
         width: 100vw;
-        height: 100vh;
+        height: 100%;
+    }
+}
+
+@media (min-width: 426px) and (max-width: 800px) {
+    #auth_container form {
+        width: 60vw;
     }
 }

@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}
+    Регистрация  
+{% endblock title %}
+
 {% block content %}
-<div id="auth_container" class="row">
-    <div class="s12" style="background-image: url('{% static 'images/signupImage.jpg' %}');">
+<div id="auth_container" class="row" style="background-image: url('{% static 'images/signupImage.jpeg' %}');">
+    <div class="s12">
         <form method="POST">
             {% csrf_token %}
             <div class="row">
                 <div class="col s12"><h5 class="center">Регистрация</h5></div>
             </div>
 
-            <div class="row">
+            <div class="row {% if form.email.errors or form.username.errors %} m-b-0 {% endif %}">
                 <div class="input-field col s6">
                     {{ form.email }}
-                    <label for="signup_email">Адрес электронной почты</label>
+                    <label for="email">Адрес электронной почты</label>
                     
                     {% if form.email.errors %}
                     <div class="error-container">
@@ -24,7 +28,7 @@
 
                 <div class="input-field col s6">
                     {{ form.username }}
-                    <label for="signup_username">Имя пользователя</label>
+                    <label for="username">Имя пользователя</label>
                     
                     {% if form.username.errors %}
                     <div class="error-container">
@@ -37,24 +41,24 @@
             <div class="row">
                 <div class="input-field col s6">
                     {{ form.first_name }}
-                    <label for="signup_f_name">Имя</label>
+                    <label for="first_name">Имя</label>
                 </div>
 
                 <div class="input-field col s6">
                     {{ form.last_name }}
-                    <label for="signup_L_name">Фамилия</label>
+                    <label for="last_name">Фамилия</label>
                 </div>
             </div>
 
             <div class="row {% if form.password2.errors %} m-b-0 {% endif %}">
                 <div class="input-field col s6 {% if form.password2.errors %} m-b-0 {% endif %}">
                     {{ form.password1 }}
-                    <label for="signup_pass_1">Пароль</label>
+                    <label for="password1">Пароль</label>
                 </div>
 
                 <div class="input-field col s6 {% if form.password2.errors %} m-b-0 {% endif %}">
                     {{ form.password2 }}
-                    <label for="signup_pass_2">Повторите пароль</label>
+                    <label for="password2">Повторите пароль</label>
                 </div>
             </div>
             
@@ -67,12 +71,12 @@
             {% endif %}
                 
             <div class="row">
-                <div class="col s6 center">
+                <div class="col s12 center">
                     <button class="waves-effect btn" type="submit">Зарегистрироваться</button>
                 </div>
                 
-                <div class="col s6">
-                    <p>Уже <a href="{% url 'signin' %}">зарегистрированы?</a></p>
+                <div class="col s12 center">
+                    <p><a href="{% url 'signin' %}">Уже зарегистрированы?</a></p>
                 </div>
             </div>
         </form>
@@ -80,8 +84,7 @@
 </div>
 <style>
     .container {
-        width: 100%;
-        max-width: 100%;
+        width: 100vw;
     }
 </style>
 {% endblock content %}
