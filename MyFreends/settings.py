@@ -2,22 +2,26 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'l7nsv6h7@6ps8x4l^%&)c07f-i9m1vd(#x+rxcorf91&5f157w'
+SECRET_KEY = 'g6l)2(vhpsn+1_mc(^jxn8&9@av2e0fmr4r#k2rg8y1szsrn3a'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 AUTH_USER_MODEL = 'account.Account'
+
+ALLOWED_HOSTS = ['myfreends.pythonanywhere.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'account',
+    'channels',
+    # 'friendship',
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'password_reset',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +53,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'MyFreends.wsgi.application'
+
+ASGI_APPLICATION = 'MyFreends.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 DATABASES = {
     'default': {
@@ -101,7 +116,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static/"),
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Регистрация  
+Регистрация
 {% endblock title %}
 
 {% block content %}
@@ -11,28 +11,19 @@
         <form method="POST">
             {% csrf_token %}
             <div class="row">
-                <div class="col s12"><h5 class="center">Регистрация</h5></div>
+                <div class="col s12">
+                    <h5 class="center">Регистрация</h5>
+                </div>
             </div>
 
-            <div class="row {% if form.email.errors or form.username.errors %} m-b-0 {% endif %}">
-                <div class="input-field col s6">
+            <div class="row {% if form.email.errors %} m-b-0 {% endif %}">
+                <div class="input-field col s12">
                     {{ form.email }}
                     <label for="email">Адрес электронной почты</label>
-                    
+
                     {% if form.email.errors %}
                     <div class="error-container">
                         <span class="helper-text">Адрес уже используется</span>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <div class="input-field col s6">
-                    {{ form.username }}
-                    <label for="username">Имя пользователя</label>
-                    
-                    {% if form.username.errors %}
-                    <div class="error-container">
-                        <span class="helper-text">Логин занят</span>
                     </div>
                     {% endif %}
                 </div>
@@ -61,7 +52,7 @@
                     <label for="password2">Повторите пароль</label>
                 </div>
             </div>
-            
+
             {% if form.password2.errors %}
             <div class="row">
                 <div class="input-field col s12 error-container" style="margin: 0">
@@ -69,12 +60,12 @@
                 </div>
             </div>
             {% endif %}
-                
+
             <div class="row">
                 <div class="col s12 center">
                     <button class="waves-effect btn" type="submit">Зарегистрироваться</button>
                 </div>
-                
+
                 <div class="col s12 center">
                     <p><a href="{% url 'signin' %}">Уже зарегистрированы?</a></p>
                 </div>
@@ -85,6 +76,7 @@
 <style>
     .container {
         width: 100vw;
+        margin: 0;
     }
 </style>
 {% endblock content %}

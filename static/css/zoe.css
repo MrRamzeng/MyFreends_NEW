@@ -1,0 +1,173 @@
+@font-face {
+	font-weight: normal;
+	font-style: normal;
+	font-family: 'feathericons';
+	src:url('../fonts/feathericons/feathericons.eot?-8is7zf');
+	src:url('../fonts/feathericons/feathericons.eot?#iefix-8is7zf') format('embedded-opentype'),
+		url('../fonts/feathericons/feathericons.woff?-8is7zf') format('woff'),
+		url('../fonts/feathericons/feathericons.ttf?-8is7zf') format('truetype'),
+		url('../fonts/feathericons/feathericons.svg?-8is7zf#feathericons') format('svg');
+}
+
+.grid {
+	position: relative;
+	list-style: none;
+	text-align: center;
+	height: 350px;
+	width: 350px;
+	margin: 1em;
+}
+
+/* Common style */
+.grid figure {
+	position: relative;
+	float: left;
+	overflow: hidden;
+	margin: 0;
+	height: 350px;
+	width: 350px;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 10px;
+    box-shadow: 1px 1px 20px black;
+}
+
+.grid figure img {
+	position: relative;
+	display: block;
+	width: 350px;
+	height: 350px;
+	object-fit: cover;
+	opacity: 0.8;
+}
+
+.grid figure figcaption {
+	padding: 2em;
+	color: #ef9817;
+	text-transform: uppercase;
+	font-size: 1.25em;
+	-webkit-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.grid figure figcaption::before,
+.grid figure figcaption::after {
+	pointer-events: none;
+}
+
+.grid figure figcaption,
+.grid figure figcaption > a {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/* Anchor will cover the whole item by default */
+/* For some effects it will show as a button */
+.grid figure figcaption > a {
+	z-index: 1000;
+	text-indent: 200%;
+	white-space: nowrap;
+	font-size: 0;
+	opacity: 0;
+}
+
+
+.grid figure p {
+	margin: 0;
+}
+
+.grid figure p {
+	letter-spacing: 1px;
+	font-size: 68.5%;
+}
+
+/*---------------*/
+/***** Zoe *****/
+/*---------------*/
+
+figure.effect-zoe figcaption {
+	top: auto;
+	bottom: 0;
+	padding: 1em;
+	height: 3.75em;
+	background: rgba(56, 56, 56, 0.6);
+	color: #fff;
+	-webkit-transition: -webkit-transform 0.35s;
+	transition: transform 0.35s;
+	-webkit-transform: translate3d(0,100%,0);
+	transform: translate3d(0,100%,0);
+}
+
+figure.effect-zoe p a {
+	background: none;
+	float: right;
+	font-size: 1.4em;
+	padding: 0 8px;
+}
+
+figure.effect-zoe p a {
+	-webkit-transition: -webkit-transform 0.35s;
+	transition: transform 0.35s;
+	-webkit-transform: translate3d(0,200%,0);
+	transform: translate3d(0,200%,0);
+}
+
+figure.effect-zoe:hover figcaption,
+figure.effect-zoe:hover p a {
+	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}
+
+figure.effect-zoe:hover p a:nth-child(3) {
+	-webkit-transition-delay: 0.1s;
+	transition-delay: 0.1s;
+}
+
+figure.effect-zoe:hover p a:nth-child(2) {
+	-webkit-transition-delay: 0.15s;
+	transition-delay: 0.15s;
+}
+
+figure.effect-zoe:hover p a:first-child {
+	-webkit-transition-delay: 0.2s;
+	transition-delay: 0.2s;
+}
+
+@media (max-width: 425px) {
+	.grid, .grid figure, .grid figure img {
+		height: 80px;
+		width: 80px;
+	}
+	
+	.grid {
+		margin: 5px
+	}
+
+	figure {
+		margin: 0;
+	}
+}
+
+@media (min-width: 426px) and (max-width: 768px) {
+  .grid, .grid figure, .grid figure img {
+	  height: 200px;
+	  width: 200px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid, .grid figure, .grid figure img {
+	  height: 250px;
+	  width: 250px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1600px) {
+  .grid, .grid figure, .grid figure img {
+	  height: 300px;
+	  width: 300px;
+  }
+}

@@ -39,15 +39,6 @@ class SignupForm(UserCreationForm):
             }
         )
     )
-    username = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                'id': 'username', 'class': 'validate', 'type': 'text',
-                'name': 'username', 'required': True, 
-                'autocomplete': 'off'
-            }
-        )
-    )
     first_name = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -89,18 +80,6 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = Account
         fields = (
-            'email', 'username', 'first_name', 'last_name', 'password1',
+            'email', 'first_name', 'last_name', 'password1',
             'password2'
         )
-    #     widgets = {
-    #         'email': forms.TextInput(
-    #         ),
-    #         'username': forms.TextInput(
-    #         ),
-    #         'first_name': forms.TextInput(
-
-    #         ),
-    #         'last_name': forms.TextInput(
-            
-    #         )
-    #     }

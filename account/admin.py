@@ -1,22 +1,22 @@
 from django.contrib import admin
-from account.models import Account
-from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
-from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import Group
+
+from account.models import Account
 
 class CustomAdmin(UserAdmin):
     model = Account
-    list_display = ('username', 'is_staff', 'is_active')
-    list_filter = ('username', 'is_staff')
+    list_display = ('username', 'is_staff')
+    list_filter = ('is_staff',)
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name', 'username', 'email', 'is_staff', 'is_active', 'password')}),
+        (None, {'fields': ('username', 'first_name', 'last_name', 'email', 'photo', 'is_staff', 'is_active', 'password')}),
     )
     add_fieldsets = (
         (None, {
-            'fields': ('username', 'email', 'password1', 'password2', 'is_staff')}
+            'fields': ('email', 'password1', 'password2', 'is_staff')}
         ),
     )
-    search_fields = ('username',)
+    search_fields = ('email',)
     list_per_page = 50
 
 admin.site.unregister(Group)

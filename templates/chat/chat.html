@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
+{% endblock css %}
+
+{% block javascript %}
+<script src="{% static 'js/chat.js' %}"></script>
+{% endblock javascript %}
+
+{% block title %}
+Сообщения
+{% endblock title %}
+
+{% block content %}
+<div id="chat_container" class="card">
+    <div class="row">
+        <div class="col s3">
+            <div class="row-section">
+                <a href="{% url 'my_profile' %}">
+                    <div class="col s4 center">
+                        <img class="circle" src="{{ request.user.photo.url }}">
+                    </div>
+
+                    <div class="col s8">
+                        <p>{{ request.user.first_name }} {{request.user.last_name }}</p>
+                    </div>
+                </a>
+            </div>
+
+            {% for user in users %}
+            <div id="to_user" class="section" style="padding: 5px 0px;">
+                <div class="row" style="margin: 0;">
+                    <a href="#{% url 'chatroom' User=request.user.username username=user.username %}">
+                        <div id="{{user.username}}" class="flex-data">
+                            <img id="{{user.username}}" class="circle online" src="{{ user.photo.url }}">
+                            <p id="{{user.username}}">{{ user.first_name }} {{ user.last_name }}</p
+                                id="{{user.username}}">
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div id="messagebox_container" class="col s9">
+            <div class="title">
+                <div id="current_user_data" class="col s12">
+                </div>
+            </div>
+
+            <div id="box" class="col s12">
+                <ul id="messages">
+                </ul>
+                <div class="message-input">
+                    <input id="chat-message-input" type="text" required placeholder="Write your message...">
+                    <button id="chat-message-submit" class="btn waves-effect">
+                        <i class="material-icons" aria-hidden="true">send</i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+
+</style>
+
+<script src="{% static 'js/main.min.js' %}"></script>
+<script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+<script>
+    $('.sidenav').removeClass("sidenav-fixed")
+
+    function displayingMessage() {// отображение сообщений и формы вывода
+        var roomName = [roomName1, roomName2];
+        var fromChatId = '{{ request.user.username }}';
+        var toChatId = id;
+
+        for (i = 0; i < roomName.length; i++) {
+            var chatSocket = new ReconnectingWebSocket(
+                'ws://' + window.location.host +
+                '/ws/chat/' + roomName[i] + '/');
+            chatSocket.onopen = function (e) {
+                fetchMessages();
+            }
+
+            chatSocket.onmessage = function (e) {
+                var data = JSON.parse(e.data);
+                if (data['command'] === 'messages') {
+                    for (let i = 0; i < data['messages'].length; i++) {
+                        createMessage(data['messages'][i]);
+                    }
+                } else if (data['command'] === 'new_message') {
+                    createMessage(data['message']);
+                }
+            }
+
+            document.querySelector('#chat-message-input').focus();
+
+            document.querySelector('#chat-message-input').onkeyup = function (e) {
+                if (e.keyCode === 13) {  // enter, return
+                    document.querySelector('#chat-message-submit').click();
+                }
+            };
+
+            document.querySelector('#chat-message-submit').onclick = function (e) {
+                var messageInputDom = document.querySelector('#chat-message-input');
+                var message = messageInputDom.value;
+                if (document.querySelector('#chat-message-input').value != '') {
+                    chatSocket.send(JSON.stringify({
+                        'command': 'new_message',
+                        'message': message,
+                        'fromSender': fromChatId,
+                        'toRecipient': toChatId
+                    }));
+                }
+                messageInputDom.value = '';
+            };
+
+            function fetchMessages() {
+                chatSocket.send(JSON.stringify({ 'command': 'fetch_messages' }));
+            }
+        }
+
+        function createMessage(data) {
+            var sender = data['sender'];
+            var msgListTag = document.createElement('li');
+            var imgTag = document.createElement('img');
+            var pTag = document.createElement('p');
+            pTag.textContent = data.message;
+            imgTag.className = 'circle';
+            if (sender === fromChatId) {
+                msgListTag.className = 'sent';
+                imgTag.src = '{{ request.user.photo.url }}';
+            } else {
+                msgListTag.className = 'replies';
+                imgTag.src = $('img#' + id).attr("src");
+            }
+            msgListTag.appendChild(imgTag);
+            msgListTag.appendChild(pTag);
+            document.querySelector('#messages').appendChild(msgListTag);
+            $('#messages').scrollTop(9999)
+        }
+    }
+
+    hash = window.location.hash
+
+    function displayingForm() { // Функция добавления формы
+        $('#current_user_data').empty()
+        $('#' + id).clone().appendTo("#current_user_data")
+        $('#box, .title').show()
+        // Обновления названия чатов
+        hash = $('#' + id).parent('a').attr('href')
+        if (hash === window.location.hash) {
+            space = hash.indexOf('_');
+            roomName1 = hash.slice(2, -1)
+            roomName2 = hash.slice(space + 1, -1) + hash.slice(space, space + 1) + hash.slice(2, space)
+            recipient = hash.slice(space + 1, -1)
+        }
+        displayingMessage() // Вывод сообщений
+    }
+
+    function selectingForm() { // Функция выбора получателя из списка
+        $("#to_user .row a").click(function (event) {
+            id = (event.target.id)
+            if ($('#' + id).parent('a').attr('href') != window.location.hash) {
+                space = this.hash.indexOf('_');
+                roomName1 = this.hash.slice(2, -1)
+                roomName2 = this.hash.slice(space + 1, -1) + this.hash.slice(space, space + 1) + this.hash.slice(2, space)
+                recipient = this.hash.slice(space + 1, -1)
+                $('#messages').empty()
+                displayingForm()
+            }
+        });
+    }
+
+    if (hash != '') { // Есть хэш
+        start = hash.indexOf('_') + 1;
+        id = (hash.slice(start, -1))
+        displayingForm() // Отображение формы
+        selectingForm() // Выбор нового получателя
+    } else { // Нет
+        selectingForm() // Выбор получателя из списка
+    }
+</script>
+{% endblock content %}

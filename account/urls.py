@@ -13,5 +13,5 @@ urlpatterns = [
     ),
     path('signup_confirm/', signup_confirm, name='signup_confirm'),
     path('signout/', LogoutView.as_view(), name='signout'),
-    path('my_profile/', profile, name='profile'),
+    path('my_profile/', profile, name='my_profile'),
 ]
