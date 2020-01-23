@@ -13,15 +13,13 @@ ALLOWED_HOSTS = ['myfreends.pythonanywhere.com', '127.0.0.1']
 INSTALLED_APPS = [
     'account',
     'channels',
-    # 'friendship',
     'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'password_reset',
+    'django.contrib.staticfiles'
 ]
 
 MIDDLEWARE = [
@@ -39,7 +37,7 @@ ROOT_URLCONF = 'MyFreends.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join('templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -30,13 +30,12 @@
             </div>
 
             {% for user in users %}
-            <div id="to_user" class="section" style="padding: 5px 0px;">
-                <div class="row" style="margin: 0;">
-                    <a href="#{% url 'chatroom' User=request.user.username username=user.username %}">
+            <div id="to_user" class="section">
+                <div class="row">
+                    <a href="#/{{request.user.username}}_{{user.username}}/">
                         <div id="{{user.username}}" class="flex-data">
                             <img id="{{user.username}}" class="circle online" src="{{ user.photo.url }}">
-                            <p id="{{user.username}}">{{ user.first_name }} {{ user.last_name }}</p
-                                id="{{user.username}}">
+                            <p id="{{user.username}}">{{ user.first_name }} {{ user.last_name }}</p>
                         </div>
                     </a>
                 </div>
@@ -55,7 +54,7 @@
                 <ul id="messages">
                 </ul>
                 <div class="message-input">
-                    <input id="chat-message-input" type="text" required placeholder="Write your message...">
+                    <input id="chat-message-input" type="text">
                     <button id="chat-message-submit" class="btn waves-effect">
                         <i class="material-icons" aria-hidden="true">send</i>
                     </button>
@@ -65,9 +64,6 @@
         </div>
     </div>
 </div>
-<style>
-
-</style>
 
 <script src="{% static 'js/main.min.js' %}"></script>
 <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
@@ -137,7 +133,7 @@
                 imgTag.src = '{{ request.user.photo.url }}';
             } else {
                 msgListTag.className = 'replies';
-                imgTag.src = $('img#' + id).attr("src");
+                imgTag.src = $('.title .circle').attr("src");
             }
             msgListTag.appendChild(imgTag);
             msgListTag.appendChild(pTag);

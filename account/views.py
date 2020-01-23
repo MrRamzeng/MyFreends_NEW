@@ -14,9 +14,12 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic.edit import FormView
 
+from django.utils.crypto import get_random_string
+
 from MyFreends import settings
 from account.forms import SigninForm, SignupForm
 from account.tokens import account_activation_token
+from account.models import Account
 
 
 class SuccessURLAllowedHostsMixin:
@@ -91,12 +94,19 @@ class LoginView(SuccessURLAllowedHostsMixin, FormView):
         return context
 
 
+def uniqueUsername():
+    usname = get_random_string(length=6)
+    return usname
+
+
 def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
+            user.username = uniqueUsername()
+            print(user.username)
             user.save()
             current_site = get_current_site(request)
             mail_subject = 'Активация учетной записи.'
