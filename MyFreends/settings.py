@@ -8,7 +8,7 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'account.Account'
 
-ALLOWED_HOSTS = ['myfreends.pythonanywhere.com', '127.0.0.1']
+ALLOWED_HOSTS = ['myfreends.herokuapp.com', '127.0.0.1']
 
 INSTALLED_APPS = [
     'account',
@@ -65,8 +65,12 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'ec2-54-246-121-32.eu-west-1.compute.amazonaws.com',
+        'PORT': 5432,
+        'NAME': 'ddclab66bp8kh',
+        'USER': 'dmjcawuacicshx',
+        'PASSWORD': '6c52ba598ec29c23adc7ee8467c149304407211683cf75c45246eff579b2d5e9',
     }
 }
 
