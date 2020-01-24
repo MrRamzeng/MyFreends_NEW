@@ -77,8 +77,8 @@
 
         for (i = 0; i < roomName.length; i++) {
             var chatSocket = new ReconnectingWebSocket(
-                'ws://' + window.location.host +
-                '/ws/chat/' + roomName[i] + '/');
+                'wss://' + window.location.host +
+                '/wss/chat/' + roomName[i] + '/');
             chatSocket.onopen = function (e) {
                 fetchMessages();
             }
