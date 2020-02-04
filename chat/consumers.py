@@ -32,11 +32,16 @@ class ChatConsumer(WebsocketConsumer):
     def new_message(self, data):
         fromSender = data['fromSender']
         toRecipient = data['toRecipient']
-        sender_user = User.objects.filter(username=fromSender)[0]
+        sender = User.objects.filter(username=fromSender)[0]
         recipient = User.objects.filter(username=toRecipient)[0]
+        f = data['file']
+        print('file', f)
+        f.save(commit=False)
+        print('it', f)
         message = Message.objects.create(
-            sender=sender_user, 
+            sender=sender, 
             message=data['message'],
+            file=f,
             recipient=recipient
         )
         message = {
@@ -57,6 +62,7 @@ class ChatConsumer(WebsocketConsumer):
             'sender': message.sender.username,
             'recipient': message.recipient.username,
             'message': message.message,
+            'file': str(message.file),
             'published': str(message.published)
         }
 

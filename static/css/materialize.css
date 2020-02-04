@@ -6776,11 +6776,10 @@ input[type=range]::-ms-thumb {
     z-index: 99;
 }
 
-.message-input input {
+.message-input input[type=text] {
     float: left;
-    border: none;
-    width: calc(100% - 60px) !important;
-    padding: 11px 32px 10px 8px;
+    width: calc(100% - 90px) !important;
+    margin-left: 30px !important;
     font-size: 0.8em;
     color: #435f7a;
 }
@@ -6805,4 +6804,9 @@ input[type=range]::-ms-thumb {
 
 .message-input button:focus {
     outline: none;
+}
+
+.message-input .file-field {
+    position: absolute;
+    width: 24px;
 }
