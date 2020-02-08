@@ -8,7 +8,7 @@ DEBUG = True
 
 AUTH_USER_MODEL = 'account.Account'
 
-ALLOWED_HOSTS = ['myfreends.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*', '127.0.0.1']
 
 INSTALLED_APPS = [
     'account',
@@ -58,7 +58,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('redis', 6379)],
         },
     },
 }
@@ -66,11 +66,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'ec2-54-246-121-32.eu-west-1.compute.amazonaws.com',
+        'HOST': 'postgre',
         'PORT': 5432,
-        'NAME': 'ddclab66bp8kh',
-        'USER': 'dmjcawuacicshx',
-        'PASSWORD': '6c52ba598ec29c23adc7ee8467c149304407211683cf75c45246eff579b2d5e9',
+        'NAME': 'mf',
+        'USER': 'admin',
+        'PASSWORD': 'password',
     }
 }
 

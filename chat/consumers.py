@@ -34,16 +34,13 @@ class ChatConsumer(WebsocketConsumer):
         toRecipient = data['toRecipient']
         sender = User.objects.filter(username=fromSender)[0]
         recipient = User.objects.filter(username=toRecipient)[0]
-        f = data['file']
-        print('file', f)
-        f.save(commit=False)
-        print('it', f)
         message = Message.objects.create(
             sender=sender, 
             message=data['message'],
-            file=f,
-            recipient=recipient
+            recipient=recipient,
         )
+        if 'imgId' in data:
+            message.img_id = data['imgId']
         message = {
             'command': 'new_message',
             'message': self.message_to_json(message)
@@ -57,14 +54,18 @@ class ChatConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        return {
+        message_json = {
             'id': message.id,
             'sender': message.sender.username,
             'recipient': message.recipient.username,
             'message': message.message,
-            'file': str(message.file),
-            'published': str(message.published)
+            'published': str(message.published),
         }
+
+        if (message.img):
+            message_json['img'] = message.img.img.url
+        return message_json
+            
 
     commands = {
         'fetch_messages': fetch_messages,

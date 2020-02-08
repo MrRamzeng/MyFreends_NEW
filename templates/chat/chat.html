@@ -54,69 +54,76 @@
                 <ul id="messages">
                 </ul>
                 <div class="message-input">
-                    <div class="file-field input-field">
-                        <span class="material-icons">attach_file</span>
-                        <input id="chat_photo_input" type="file" accept="image/jpeg,image/png,image/gif">
-                        <div class="file-path-wrapper">
-                          <input class="file-path validate" type="text" placeholder="Upload one or more files">
-                        </div>
-                    </div>
-                    <input id="chat_message_input" type="text">
-                    <button id="chat_submit" class="btn waves-effect">
-                        <i class="material-icons" aria-hidden="true">send</i>
-                    </button>
-                    <div class="row">
-                        <span id="preview_image"></span>
-                    </div>
+                    <form method="POST" action="{% url 'upload' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form }}
+                        <input id="chat_message_input" type="text">
+                        <button id="chat_submit" class="btn waves-effect">
+                            <i class="material-icons" aria-hidden="true">send</i>
+                        </button>
+                    </form>
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-<style>
-    .img-thumbnail {
-        height: 75px;
-        border: 1px solid #000;
-        margin: 10px 5px 0 0;
-    }
-</style>
 <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+
 <script>
-    function handleFileSelectMulti(evt) {
-        var files = evt.target.files; // FileList object
-        document.getElementById('preview_image').innerHTML = "";
-        for (var i = 0, f; f = files[i]; i++) {
-
-            var reader = new FileReader();
-
-            // Closure to capture the file information.
-            reader.onload = (function (theFile) {
-                return function (e) {
-                    // Render thumbnail.
-                    var span = document.createElement('span');
-                    span.innerHTML = ['<img id="', escape(theFile.name),
-                        '" class="img-thumbnail" src="', e.target.result, '">'].join('');
-                    document.getElementById('preview_image').insertBefore(span, null);
-                };
-            })(f);
-
-            // Read in the image file as a data URL.
-            reader.readAsDataURL(f);
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
         }
+        return cookieValue;
     }
 
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
 
-    document.getElementById('chat_photo_input').addEventListener('change', handleFileSelectMulti, false);
-</script>
-<script>
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                var csrftoken = getCookie('csrftoken');
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
     $('.sidenav').removeClass("sidenav-fixed")
+    
+    var roomName;
+    var fromChatId = '{{ request.user.username }}';
+    var toChatId;
+
+    function sendMessage(chatSocket, imgId) {
+        var messageInputDom = document.querySelector('#chat_message_input');
+        var message = messageInputDom.value;
+        if (document.querySelector('#chat_message_input').value != '') {
+            chatSocket.send(JSON.stringify({
+                'command': 'new_message',
+                'message': message,
+                'fromSender': fromChatId,
+                'toRecipient': id,
+                'imgId': imgId,
+            }));
+        }
+        messageInputDom.value = '';
+    }
 
     function displayingMessage() {// отображение сообщений и формы вывода
-        var roomName = [roomName1, roomName2];
-        var fromChatId = '{{ request.user.username }}';
-        var toChatId = id;
-
+        roomName = [roomName1, roomName2]
         for (i = 0; i < roomName.length; i++) {
             var chatSocket = new ReconnectingWebSocket(
                 'ws://' + window.location.host +
@@ -145,22 +152,26 @@
             };
 
             document.querySelector('#chat_submit').onclick = function (e) {
-                var messageInputDom = document.querySelector('#chat_message_input');
-                var fileInput = document.querySelector('#chat_photo_input');
-                var message = messageInputDom.value;
-                var file = fileInput.files;
-                console.log(file)
-                if (document.querySelector('#chat_message_input').value != '') {
-                    chatSocket.send(JSON.stringify({
-                        'command': 'new_message',
-                        'message': message,
-                        'file': file,
-                        'fromSender': fromChatId,
-                        'toRecipient': toChatId
-                    }));
+                e.stopPropagation();
+                e.preventDefault()
+                var files = $('#{{form.img.auto_id}}')[0].files[0];
+                if (files) {
+                    var fd = new FormData();
+                    fd.append('img', files);
+                    $.ajax({
+                        url: "{% url 'upload' %}",
+                        type: "POST",
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        data: fd,
+                        success: function (data) {
+                            sendMessage(chatSocket, data.id)
+                        }
+                    });
+                } else {
+                    sendMessage(chatSocket)
                 }
-                messageInputDom.value = '';
-                fileInput.value = '';
             };
 
             function fetchMessages() {
@@ -174,10 +185,10 @@
             var imgTag = document.createElement('img');
             var pTag = document.createElement('p');
             pTag.textContent = data.message;
-            if (data.file) {
+            if (data.img) {
                 var file = document.createElement("img");
                 var brTag = document.createElement("br")
-                file.setAttribute('src', '/media/' + data.file)
+                file.setAttribute('src', data.img)
                 pTag.appendChild(brTag)
                 pTag.appendChild(file)
             }
