@@ -54,21 +54,63 @@
                 <ul id="messages">
                 </ul>
                 <div class="message-input">
-                    <form method="POST" action="{% url 'upload' %}" enctype="multipart/form-data">
+                    <div class="file-field input-field">
                         {% csrf_token %}
-                        {{ form }}
-                        <input id="chat_message_input" type="text">
-                        <button id="chat_submit" class="btn waves-effect">
-                            <i class="material-icons" aria-hidden="true">send</i>
-                        </button>
-                    </form>
+                        <span class="material-icons">attach_file</span>
+                        <input id="chat_photo_input" type="file" accept="image/jpeg,image/png,image/gif">
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                        </div>
+                    </div>
+                    <input id="chat_message_input" type="text">
+                    <button id="chat_submit" class="btn waves-effect">
+                        <i class="material-icons" aria-hidden="true">send</i>
+                    </button>
+                    <div class="row">
+                        <span id="preview_image"></span>
+                    </div>
                 </div>
             </div>
 
         </div>
     </div>
 </div>
+<style>
+    .img-thumbnail {
+        height: 75px;
+        border: 1px solid #000;
+        margin: 10px 5px 0 0;
+    }
+</style>
 <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
+
+<script>
+    function handleFileSelectMulti(evt) {
+        var files = evt.target.files; // FileList object
+        document.getElementById('preview_image').innerHTML = "";
+        for (var i = 0, f; f = files[i]; i++) {
+
+            var reader = new FileReader();
+
+            // Closure to capture the file information.
+            reader.onload = (function (theFile) {
+                return function (e) {
+                    // Render thumbnail.
+                    var span = document.createElement('span');
+                    span.innerHTML = ['<img id="', escape(theFile.name),
+                        '" class="img-thumbnail" src="', e.target.result, '">'].join('');
+                    document.getElementById('preview_image').insertBefore(span, null);
+                };
+            })(f);
+
+            // Read in the image file as a data URL.
+            reader.readAsDataURL(f);
+        }
+    }
+
+
+    document.getElementById('chat_photo_input').addEventListener('change', handleFileSelectMulti, false);
+</script>
 
 <script>
     function getCookie(name) {
@@ -101,11 +143,8 @@
         }
     });
 
-    $('.sidenav').removeClass("sidenav-fixed")
-    
     var roomName;
     var fromChatId = '{{ request.user.username }}';
-    var toChatId;
 
     function sendMessage(chatSocket, imgId) {
         var messageInputDom = document.querySelector('#chat_message_input');
@@ -154,7 +193,7 @@
             document.querySelector('#chat_submit').onclick = function (e) {
                 e.stopPropagation();
                 e.preventDefault()
-                var files = $('#{{form.img.auto_id}}')[0].files[0];
+                var files = $('#chat_photo_input')[0].files[0];
                 if (files) {
                     var fd = new FormData();
                     fd.append('img', files);
@@ -217,9 +256,10 @@
         hash = $('#' + id).parent('a').attr('href')
         if (hash === window.location.hash) {
             space = hash.indexOf('_');
-            roomName1 = hash.slice(2, -1)
-            roomName2 = hash.slice(space + 1, -1) + hash.slice(space, space + 1) + hash.slice(2, space)
             recipient = hash.slice(space + 1, -1)
+            roomName1 = '{{ request.user.username }}_' + recipient
+            roomName2 = recipient + '_{{ request.user.username }}'
+            console.log(roomName1, roomName2)
         }
         displayingMessage() // Вывод сообщений
     }
@@ -229,16 +269,16 @@
             id = (event.target.id)
             if ($('#' + id).parent('a').attr('href') != window.location.hash) {
                 space = this.hash.indexOf('_');
-                roomName1 = this.hash.slice(2, -1)
-                roomName2 = this.hash.slice(space + 1, -1) + this.hash.slice(space, space + 1) + this.hash.slice(2, space)
                 recipient = this.hash.slice(space + 1, -1)
+                roomName1 = '{{ request.user.username }}_' + recipient
+                roomName2 = recipient + '_{{ request.user.username }}'
                 $('#messages').empty()
                 displayingForm()
             }
         });
     }
 
-    if (hash != '') { // Есть хэш
+    if (window.location.hash != '') { // Есть хэш
         start = hash.indexOf('_') + 1;
         id = (hash.slice(start, -1))
         displayingForm() // Отображение формы

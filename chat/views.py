@@ -6,7 +6,6 @@ from django.utils.safestring import mark_safe
 
 from account.models import Account
 from chat.models import Message, MessageImage
-from chat.forms import ImageForm
 
 User = get_user_model()
 User = User.username
@@ -19,12 +18,11 @@ def chat(request):
     lastMessageFromRecipient = Message.objects.filter(
         recipient=request.user
     ).last()
-    form = ImageForm(request.FILES)
     return render(
         request, 'chat/chat.html', 
         {
             'users': users, 'lastMessageFromSender': lastMessageFromSender,
-            'lastMessageFromRecipient': lastMessageFromRecipient, 'form': form,
+            'lastMessageFromRecipient': lastMessageFromRecipient
         }
     )
 

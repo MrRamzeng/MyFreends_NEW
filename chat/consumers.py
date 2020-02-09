@@ -34,13 +34,19 @@ class ChatConsumer(WebsocketConsumer):
         toRecipient = data['toRecipient']
         sender = User.objects.filter(username=fromSender)[0]
         recipient = User.objects.filter(username=toRecipient)[0]
-        message = Message.objects.create(
-            sender=sender, 
-            message=data['message'],
-            recipient=recipient,
-        )
         if 'imgId' in data:
-            message.img_id = data['imgId']
+            message = Message.objects.create(
+                sender=sender, 
+                message=data['message'],
+                recipient=recipient,
+                img_id=data['imgId']
+            )
+        else:
+            message = Message.objects.create(
+                sender=sender, 
+                message=data['message'],
+                recipient=recipient,
+            )
         message = {
             'command': 'new_message',
             'message': self.message_to_json(message)
