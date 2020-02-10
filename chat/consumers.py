@@ -34,7 +34,14 @@ class ChatConsumer(WebsocketConsumer):
         toRecipient = data['toRecipient']
         sender = User.objects.filter(username=fromSender)[0]
         recipient = User.objects.filter(username=toRecipient)[0]
-        if 'imgId' in data:
+        if 'smileId' in data:
+            print(data['smileId'])
+            message = Message.objects.create(
+                sender=sender,
+                recipient=recipient,
+                smile_id=data['smileId']
+            )
+        elif 'imgId' in data:
             message = Message.objects.create(
                 sender=sender, 
                 message=data['message'],
@@ -70,6 +77,9 @@ class ChatConsumer(WebsocketConsumer):
 
         if (message.img):
             message_json['img'] = message.img.img.url
+        if (message.smile):
+            message_json['smile'] = message.smile.img.url
+            
         return message_json
             
 

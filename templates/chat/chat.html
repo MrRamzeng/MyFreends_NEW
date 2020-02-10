@@ -57,6 +57,7 @@
                     <div class="row">
                         <span id="preview_image"></span>
                     </div>
+
                     <div class="file-field input-field">
                         {% csrf_token %}
                         <span class="material-icons">attach_file</span>
@@ -69,32 +70,32 @@
                     <button id="chat_submit" class="btn waves-effect">
                         <i class="material-icons" aria-hidden="true">send</i>
                     </button>
+                    <i class="dropdown-trigger material-icons" data-target="smiles_list" aria-hidden="true" style="margin: 10px;">mood</i>
+                    <div id='smiles_list' class='dropdown-content'>
+                        <div>
+                            {% for smile in smiles %}
+                            <img id="{{ smile.id }}" src="{{ smile.img.url }}">
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
+
 <style>
-    .message-input .row {
-        margin: 0 5px;
-        z-index: 100;
-        position: absolute;
-        top: -90px;
-        width: inherit;
-        background-color: rgba(0, 0, 0, 0.3);
+    #smiles_list div {
+        display: flex;
+        justify-content: space-around;
     }
 
-    .file-path-wrapper {
-        display: none;
-    }
-
-    .img-thumbnail {
-        height: 75px;
-        border: 1px solid #000;
-        margin: 5px 5px;
+    #smiles_list img {
+        height: 40px;
+        width: 40px;
     }
 </style>
+
 <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
 
 <script>
@@ -154,7 +155,7 @@
     function sendMessage(chatSocket, imgId) {
         var messageInputDom = document.querySelector('#chat_message_input');
         var message = messageInputDom.value;
-        if (document.querySelector('#chat_message_input').value != '') {
+        if (document.querySelector('#chat_message_input').value != '' || document.querySelector('#chat_photo_input').value != '') {
             chatSocket.send(JSON.stringify({
                 'command': 'new_message',
                 'message': message,
@@ -177,6 +178,16 @@
             chatSocket.onopen = function (e) {
                 fetchMessages();
             }
+
+            document.querySelector('#smiles_list div').onclick = function (e) {
+                var smile = e.target.id; 
+                chatSocket.send(JSON.stringify({
+                    'command': 'new_message',
+                    'fromSender': fromChatId,
+                    'toRecipient': id,
+                    'smileId': smile,
+                }));
+            };
 
             chatSocket.onmessage = function (e) {
                 var data = JSON.parse(e.data);
@@ -233,10 +244,18 @@
             pTag.textContent = data.message;
             if (data.img) {
                 var file = document.createElement("img");
-                var brTag = document.createElement("br")
                 file.setAttribute('src', data.img)
                 file.setAttribute('class', 'img-thumbnail')
-                pTag.appendChild(brTag)
+                if (data.message) {
+                    var brTag = document.createElement("br");
+                    pTag.appendChild(brTag)
+                }
+                pTag.appendChild(file)
+            }
+            if (data.smile) {
+                var file = document.createElement("img");
+                file.setAttribute('src', data.smile)
+                file.setAttribute('class', 'img-thumbnail')
                 pTag.appendChild(file)
             }
             imgTag.className = 'circle';
@@ -285,7 +304,7 @@
         });
     }
 
-    $(window).bind('hashchange', function() {
+    $(window).bind('hashchange', function () {
         if (location.hash === '') {
             $('.title, #box').hide()
         } else {

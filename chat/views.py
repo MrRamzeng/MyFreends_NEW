@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 
 from account.models import Account
-from chat.models import Message, MessageImage
+from chat.models import Message, MessageImage, MessageSmile
 
 User = get_user_model()
 User = User.username
@@ -18,20 +18,20 @@ def chat(request):
     lastMessageFromRecipient = Message.objects.filter(
         recipient=request.user
     ).last()
+    smiles = MessageSmile.objects.all()
     return render(
         request, 'chat/chat.html', 
         {
             'users': users, 'lastMessageFromSender': lastMessageFromSender,
-            'lastMessageFromRecipient': lastMessageFromRecipient
+            'lastMessageFromRecipient': lastMessageFromRecipient,
+            'smiles': smiles,
         }
     )
 
 @login_required(login_url='signin')
 def upload_image(request):
     if request.method == 'POST' and request.FILES['img']:
-
         image = MessageImage(img=request.FILES['img'])
         image.save()
         return JsonResponse({'success': True, 'id': image.id})
-
     return JsonResponse({'success': False, 'message': 'no file'})
