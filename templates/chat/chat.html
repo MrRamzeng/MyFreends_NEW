@@ -54,6 +54,9 @@
                 <ul id="messages">
                 </ul>
                 <div class="message-input">
+                    <div class="row">
+                        <span id="preview_image"></span>
+                    </div>
                     <div class="file-field input-field">
                         {% csrf_token %}
                         <span class="material-icons">attach_file</span>
@@ -66,9 +69,6 @@
                     <button id="chat_submit" class="btn waves-effect">
                         <i class="material-icons" aria-hidden="true">send</i>
                     </button>
-                    <div class="row">
-                        <span id="preview_image"></span>
-                    </div>
                 </div>
             </div>
 
@@ -76,26 +76,37 @@
     </div>
 </div>
 <style>
+    .message-input .row {
+        margin: 0 5px;
+        z-index: 100;
+        position: absolute;
+        top: -90px;
+        width: inherit;
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .file-path-wrapper {
+        display: none;
+    }
+
     .img-thumbnail {
         height: 75px;
         border: 1px solid #000;
-        margin: 10px 5px 0 0;
+        margin: 5px 5px;
     }
 </style>
 <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
 
 <script>
     function handleFileSelectMulti(evt) {
-        var files = evt.target.files; // FileList object
+        var files = evt.target.files;
         document.getElementById('preview_image').innerHTML = "";
         for (var i = 0, f; f = files[i]; i++) {
 
             var reader = new FileReader();
 
-            // Closure to capture the file information.
             reader.onload = (function (theFile) {
                 return function (e) {
-                    // Render thumbnail.
                     var span = document.createElement('span');
                     span.innerHTML = ['<img id="', escape(theFile.name),
                         '" class="img-thumbnail" src="', e.target.result, '">'].join('');
@@ -103,23 +114,18 @@
                 };
             })(f);
 
-            // Read in the image file as a data URL.
             reader.readAsDataURL(f);
         }
     }
 
-
     document.getElementById('chat_photo_input').addEventListener('change', handleFileSelectMulti, false);
-</script>
 
-<script>
     function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
             for (var i = 0; i < cookies.length; i++) {
                 var cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
@@ -130,7 +136,6 @@
     }
 
     function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
@@ -159,6 +164,8 @@
             }));
         }
         messageInputDom.value = '';
+        $('#chat_photo_input').val('');
+        $('#messagebox_container .row').empty();
     }
 
     function displayingMessage() {// отображение сообщений и формы вывода
@@ -228,6 +235,7 @@
                 var file = document.createElement("img");
                 var brTag = document.createElement("br")
                 file.setAttribute('src', data.img)
+                file.setAttribute('class', 'img-thumbnail')
                 pTag.appendChild(brTag)
                 pTag.appendChild(file)
             }
@@ -259,7 +267,6 @@
             recipient = hash.slice(space + 1, -1)
             roomName1 = '{{ request.user.username }}_' + recipient
             roomName2 = recipient + '_{{ request.user.username }}'
-            console.log(roomName1, roomName2)
         }
         displayingMessage() // Вывод сообщений
     }
@@ -277,6 +284,14 @@
             }
         });
     }
+
+    $(window).bind('hashchange', function() {
+        if (location.hash === '') {
+            $('.title, #box').hide()
+        } else {
+            $('#box, .title').show()
+        }
+    });
 
     if (window.location.hash != '') { // Есть хэш
         start = hash.indexOf('_') + 1;

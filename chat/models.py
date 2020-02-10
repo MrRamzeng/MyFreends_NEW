@@ -3,11 +3,8 @@ from account.models import Account
 from django.utils.translation import ugettext_lazy as _
 
 
-def user_files(instance, filename):
-    return "%s/chat/%s" % (instance.sender.username, filename)
-
 class MessageImage(models.Model):
-    img = models.ImageField(upload_to="media/")
+    img = models.ImageField(upload_to="chat/")
 
 
 class Message(models.Model):
@@ -19,13 +16,8 @@ class Message(models.Model):
         Account, verbose_name=_("recipient"), on_delete=models.CASCADE,
         related_name='recipient'
     )
-
-    img = models.ForeignKey(MessageImage, null=True, on_delete=models.SET_NULL)
-
     message = models.TextField(_("message"))
-    file = models.FileField(
-        upload_to=user_files, blank=True, null=True, max_length=100
-    )
+    img = models.ForeignKey(MessageImage, null=True, on_delete=models.SET_NULL)
     published = models.DateTimeField(_("published"), auto_now_add=True)
 
     class Meta:
