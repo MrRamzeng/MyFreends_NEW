@@ -6633,11 +6633,6 @@ input[type=range]::-ms-thumb {
     margin-bottom: 0;
     height: 100%;
 }
-
-#messagebox_container {
-    width: calc(100% - 320px);
-}
-
 #chat_container .s12 {
     padding: 0;
 }
@@ -6679,7 +6674,7 @@ input[type=range]::-ms-thumb {
 
 #messagebox_container {
     padding: 0;
-    width: calc(100vw - 310px);
+    width: calc(100vw - 320px);
     border-left: solid 1px #9e9e9e;
 }
 
