@@ -6635,7 +6635,7 @@ input[type=range]::-ms-thumb {
 }
 
 #messagebox_container {
-    width: calc(100% - 310px);
+    width: calc(100% - 320px);
 }
 
 #chat_container .s12 {
