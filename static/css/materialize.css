@@ -6728,6 +6728,7 @@ input[type=range]::-ms-thumb {
 
 #messages li.replies>img {
     float: right;
+    margin: 13px 0 0 8px;
 }
 
 #messages li.replies p {
@@ -6852,7 +6853,8 @@ input[type=range]::-ms-thumb {
 }
 
 .brand-logo img {
-    height: 60px;
+    height: 50px;
+    margin: 5px;
 }
 
 /* scroll */
