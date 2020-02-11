@@ -35,7 +35,6 @@ class ChatConsumer(WebsocketConsumer):
         sender = User.objects.filter(username=fromSender)[0]
         recipient = User.objects.filter(username=toRecipient)[0]
         if 'smileId' in data:
-            print(data['smileId'])
             message = Message.objects.create(
                 sender=sender,
                 recipient=recipient,

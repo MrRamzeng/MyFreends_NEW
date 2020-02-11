@@ -21,13 +21,29 @@
 <body>
 
     {% if user.is_authenticated %}
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper">
+                <a class="brand-logo center">
+                    <img src="{% static 'images/lg1.png' %}">
+                </a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a href="{% url 'signout' %}">
+                            <i class="material-icons">exit_to_app</i>
+                        </a>
+                    </li>
+                </ul>
+                <a class="sidenav-trigger" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+            </div>
+        </nav>
+    </div>
     <ul id="slide-out" class="sidenav sidenav-fixed">
         <li>
             <div class="user-view">
                 <div class="row">
                     <a href="{% url 'my_profile' %}">
                         <div class="col s4">
-
                             {% if request.user.photo %}
                             <img class="circle" src="{{ request.user.photo.url }}">
                             {% elif request.user.gender == "Male" %}
@@ -35,7 +51,6 @@
                             {% else %}
                             <img class="circle" src="{% static 'css/images/no_image_woman.png' %}">
                             {% endif %}
-
                         </div>
 
                         <div class="col s8">
@@ -46,7 +61,9 @@
             </div>
         </li>
 
-        <li><div class="divider"></div></li>
+        <li>
+            <div class="divider"></div>
+        </li>
 
         <li>
             <a class="waves-effect" href="{% url 'my_profile' %}">
@@ -62,7 +79,9 @@
             </a>
         </li>
 
-        <li><div class="divider"></div></li>
+        <li>
+            <div class="divider"></div>
+        </li>
 
         {% if request.user.is_staff %}
         <li>
@@ -75,14 +94,12 @@
 
         <li><a href="{% url 'signout' %}">Выйти</a></li>
     </ul>
-    <a class="sidenav-trigger" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
     {% endif %}
 
     <div class="container">
         {% block content %}
         {% endblock content %}
     </div>
-
     <script src="{% static 'js/materialize.jquery.js' %}"></script>
     <script src="{% static 'js/materialize.min.js' %}"></script>
 </body>

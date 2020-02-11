@@ -16,7 +16,7 @@
 {% block content %}
 <div id="chat_container" class="card">
     <div class="row">
-        <div class="col s3">
+        <div id="user_list" class="col">
             <div class="row-section">
                 <a href="{% url 'my_profile' %}">
                     <div class="col s4 center">
@@ -30,9 +30,9 @@
             </div>
 
             {% for user in users %}
-            <div id="to_user" class="section">
+            <div id="recipient" class="section">
                 <div class="row">
-                    <a href="#/{{request.user.username}}_{{user.username}}/">
+                    <a href="#/{{request.user.username}}_{{user.username}}/" class="active">
                         <div id="{{user.username}}" class="flex-data">
                             <img id="{{user.username}}" class="circle online" src="{{ user.photo.url }}">
                             <p id="{{user.username}}">{{ user.first_name }} {{ user.last_name }}</p>
@@ -41,10 +41,9 @@
                 </div>
             </div>
             {% endfor %}
-
         </div>
 
-        <div id="messagebox_container" class="col s9">
+        <div id="messagebox_container" class="col">
             <div class="title">
                 <div id="current_user_data" class="col s12">
                 </div>
@@ -58,7 +57,7 @@
                         <span id="preview_image"></span>
                     </div>
 
-                    <div class="file-field input-field">
+                    <div class="file-field">
                         {% csrf_token %}
                         <span class="material-icons">attach_file</span>
                         <input id="chat_photo_input" type="file" accept="image/jpeg,image/png,image/gif">
@@ -70,13 +69,11 @@
                     <button id="chat_submit" class="btn waves-effect">
                         <i class="material-icons" aria-hidden="true">send</i>
                     </button>
-                    <i class="dropdown-trigger material-icons" data-target="smiles_list" aria-hidden="true" style="margin: 10px;">mood</i>
-                    <div id='smiles_list' class='dropdown-content'>
-                        <div>
-                            {% for smile in smiles %}
-                            <img id="{{ smile.id }}" src="{{ smile.img.url }}">
-                            {% endfor %}
-                        </div>
+                    <a class="dropdown-trigger material-icons" data-target="smile_list" aria-hidden="true" style="margin: 10px;">mood</a>
+                    <div id='smile_list' class='dropdown-content'>
+                        {% for smile in smiles %}
+                        <img id="{{ smile.id }}" src="{{ smile.img.url }}" style="margin: 5px;">
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -85,240 +82,31 @@
 </div>
 
 <style>
-    #smiles_list div {
-        display: flex;
-        justify-content: space-around;
+    .container {
+        width: 100%;
+        margin: 0;
+        max-width: 4320px;
     }
 
-    #smiles_list img {
-        height: 40px;
-        width: 40px;
+    #smile_list {
+        width: 250px !important;
+    }
+
+    #smile_list img {
+        height: 70px;
+        width: 70px;
+    }
+    body {
+        background: linear-gradient(120deg, rgba(101,163,228,1) 0%, rgba(23,88,157,1) 45%, rgba(12,69,162,0.8) 70%, rgba(55,29,140,0.9) 100%);
     }
 </style>
 
 <script src="{% static 'js/reconnecting-websocket.min.js' %}"></script>
-
 <script>
-    function handleFileSelectMulti(evt) {
-        var files = evt.target.files;
-        document.getElementById('preview_image').innerHTML = "";
-        for (var i = 0, f; f = files[i]; i++) {
-
-            var reader = new FileReader();
-
-            reader.onload = (function (theFile) {
-                return function (e) {
-                    var span = document.createElement('span');
-                    span.innerHTML = ['<img id="', escape(theFile.name),
-                        '" class="img-thumbnail" src="', e.target.result, '">'].join('');
-                    document.getElementById('preview_image').insertBefore(span, null);
-                };
-            })(f);
-
-            reader.readAsDataURL(f);
-        }
-    }
-
-    document.getElementById('chat_photo_input').addEventListener('change', handleFileSelectMulti, false);
-
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    function csrfSafeMethod(method) {
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-
-    $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                var csrftoken = getCookie('csrftoken');
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-
-    var roomName;
     var fromChatId = '{{ request.user.username }}';
-
-    function sendMessage(chatSocket, imgId) {
-        var messageInputDom = document.querySelector('#chat_message_input');
-        var message = messageInputDom.value;
-        if (document.querySelector('#chat_message_input').value != '' || document.querySelector('#chat_photo_input').value != '') {
-            chatSocket.send(JSON.stringify({
-                'command': 'new_message',
-                'message': message,
-                'fromSender': fromChatId,
-                'toRecipient': id,
-                'imgId': imgId,
-            }));
-        }
-        messageInputDom.value = '';
-        $('#chat_photo_input').val('');
-        $('#messagebox_container .row').empty();
-    }
-
-    function displayingMessage() {// отображение сообщений и формы вывода
-        roomName = [roomName1, roomName2]
-        for (i = 0; i < roomName.length; i++) {
-            var chatSocket = new ReconnectingWebSocket(
-                'ws://' + window.location.host +
-                '/wss/chat/' + roomName[i] + '/');
-            chatSocket.onopen = function (e) {
-                fetchMessages();
-            }
-
-            document.querySelector('#smiles_list div').onclick = function (e) {
-                var smile = e.target.id; 
-                chatSocket.send(JSON.stringify({
-                    'command': 'new_message',
-                    'fromSender': fromChatId,
-                    'toRecipient': id,
-                    'smileId': smile,
-                }));
-            };
-
-            chatSocket.onmessage = function (e) {
-                var data = JSON.parse(e.data);
-                if (data['command'] === 'messages') {
-                    for (let i = 0; i < data['messages'].length; i++) {
-                        createMessage(data['messages'][i]);
-                    }
-                } else if (data['command'] === 'new_message') {
-                    createMessage(data['message']);
-                }
-            }
-
-            document.querySelector('#chat_message_input').focus();
-
-            document.querySelector('#chat_message_input').onkeyup = function (e) {
-                if (e.keyCode === 13) {  // enter, return
-                    document.querySelector('#chat_submit').click();
-                }
-            };
-
-            document.querySelector('#chat_submit').onclick = function (e) {
-                e.stopPropagation();
-                e.preventDefault()
-                var files = $('#chat_photo_input')[0].files[0];
-                if (files) {
-                    var fd = new FormData();
-                    fd.append('img', files);
-                    $.ajax({
-                        url: "{% url 'upload' %}",
-                        type: "POST",
-                        cache: false,
-                        processData: false,
-                        contentType: false,
-                        data: fd,
-                        success: function (data) {
-                            sendMessage(chatSocket, data.id)
-                        }
-                    });
-                } else {
-                    sendMessage(chatSocket)
-                }
-            };
-
-            function fetchMessages() {
-                chatSocket.send(JSON.stringify({ 'command': 'fetch_messages' }));
-            }
-        }
-
-        function createMessage(data) {
-            var sender = data['sender'];
-            var msgListTag = document.createElement('li');
-            var imgTag = document.createElement('img');
-            var pTag = document.createElement('p');
-            pTag.textContent = data.message;
-            if (data.img) {
-                var file = document.createElement("img");
-                file.setAttribute('src', data.img)
-                file.setAttribute('class', 'img-thumbnail')
-                if (data.message) {
-                    var brTag = document.createElement("br");
-                    pTag.appendChild(brTag)
-                }
-                pTag.appendChild(file)
-            }
-            if (data.smile) {
-                var file = document.createElement("img");
-                file.setAttribute('src', data.smile)
-                file.setAttribute('class', 'img-thumbnail')
-                pTag.appendChild(file)
-            }
-            imgTag.className = 'circle';
-            if (sender === fromChatId) {
-                msgListTag.className = 'sent';
-                imgTag.src = '{{ request.user.photo.url }}';
-            } else {
-                msgListTag.className = 'replies';
-                imgTag.src = $('.title .circle').attr("src");
-            }
-            msgListTag.appendChild(imgTag);
-            msgListTag.appendChild(pTag);
-            document.querySelector('#messages').appendChild(msgListTag);
-            $('#messages').scrollTop(9999)
-        }
-    }
-
-    hash = window.location.hash
-
-    function displayingForm() { // Функция добавления формы
-        $('#current_user_data').empty()
-        $('#' + id).clone().appendTo("#current_user_data")
-        $('#box, .title').show()
-        // Обновления названия чатов
-        hash = $('#' + id).parent('a').attr('href')
-        if (hash === window.location.hash) {
-            space = hash.indexOf('_');
-            recipient = hash.slice(space + 1, -1)
-            roomName1 = '{{ request.user.username }}_' + recipient
-            roomName2 = recipient + '_{{ request.user.username }}'
-        }
-        displayingMessage() // Вывод сообщений
-    }
-
-    function selectingForm() { // Функция выбора получателя из списка
-        $("#to_user .row a").click(function (event) {
-            id = (event.target.id)
-            if ($('#' + id).parent('a').attr('href') != window.location.hash) {
-                space = this.hash.indexOf('_');
-                recipient = this.hash.slice(space + 1, -1)
-                roomName1 = '{{ request.user.username }}_' + recipient
-                roomName2 = recipient + '_{{ request.user.username }}'
-                $('#messages').empty()
-                displayingForm()
-            }
-        });
-    }
-
-    $(window).bind('hashchange', function () {
-        if (location.hash === '') {
-            $('.title, #box').hide()
-        } else {
-            $('#box, .title').show()
-        }
-    });
-
-    if (window.location.hash != '') { // Есть хэш
-        start = hash.indexOf('_') + 1;
-        id = (hash.slice(start, -1))
-        displayingForm() // Отображение формы
-        selectingForm() // Выбор нового получателя
-    } else { // Нет
-        selectingForm() // Выбор получателя из списка
-    }
+    var senderImage = '{{ request.user.photo.url }}';
+    var uploadImageUrl = '{% url "upload" %}';
+    $('.sidenav').removeClass('sidenav-fixed')
 </script>
+<script src="{% static 'js/chat-socket.js' %}"></script>
 {% endblock content %}
