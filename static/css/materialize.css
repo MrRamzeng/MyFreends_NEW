@@ -6697,6 +6697,8 @@ input[type=range]::-ms-thumb {
     height: calc(100vh - 80px - 95px);
     margin: 0;
     overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #435f7a #9e9e9e;
 }
 
 .online {
