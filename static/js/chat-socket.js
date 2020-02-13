@@ -95,6 +95,10 @@ function displayingMessage() {
                 createMessage(data['message']);
             }
         }
+        
+        chatSocket.onclose = function (e) {
+            $('#messages').empty()
+        };
 
         document.querySelector('#chat_message_input').focus();
 
@@ -119,16 +123,17 @@ function displayingMessage() {
                     contentType: false,
                     data: fd,
                     success: function (data) {
-                        sendMessage(chatSocket, data.id)
+                        sendMessage(chatSocket, data.id);
                     }
                 });
             } else {
-                sendMessage(chatSocket)
+                sendMessage(chatSocket);
             }
         };
 
         function fetchMessages() {
             chatSocket.send(JSON.stringify({ 'command': 'fetch_messages' }));
+            $('#messages').empty();
         }
     }
 
