@@ -2,62 +2,31 @@ from django.contrib.auth import get_user_model
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 import json
-from chat.models import Message
-from itertools import chain
-
+from .models import Message
 
 User = get_user_model()
 
-
 class ChatConsumer(WebsocketConsumer):
-    
+
     def fetch_messages(self, data):
-        room = self.room_name
-        from_username = room[room.find('_') + 1:]
-        to_username = room[:room.find('_')]
-        sender = User.objects.get(username=from_username)
-        recipient = User.objects.get(username=to_username)
-        messagesFromUser = Message.objects.filter(sender=sender, recipient=recipient)
-        messagesToUser = Message.objects.filter(sender=recipient, recipient=sender)
-        messages = sorted(
-            chain(messagesFromUser, messagesToUser),
-            key=lambda instance: instance.published
-        )
-        message = {
+        messages = Message.last_10_messages()
+        content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
         }
-        self.send_message(message)
+        self.send_message(content)
 
     def new_message(self, data):
-        fromSender = data['fromSender']
-        toRecipient = data['toRecipient']
-        sender = User.objects.filter(username=fromSender)[0]
-        recipient = User.objects.filter(username=toRecipient)[0]
-        if 'smileId' in data:
-            message = Message.objects.create(
-                sender=sender,
-                recipient=recipient,
-                smile_id=data['smileId']
-            )
-        elif 'imgId' in data:
-            message = Message.objects.create(
-                sender=sender, 
-                message=data['message'],
-                recipient=recipient,
-                img_id=data['imgId']
-            )
-        else:
-            message = Message.objects.create(
-                sender=sender, 
-                message=data['message'],
-                recipient=recipient,
-            )
-        message = {
+        author = data['from']
+        author_user = User.objects.filter(username=author)[0]
+        message = Message.objects.create(
+            author=author_user, 
+            content=data['message'])
+        content = {
             'command': 'new_message',
             'message': self.message_to_json(message)
         }
-        return self.send_chat_message(message)
+        return self.send_chat_message(content)
 
     def messages_to_json(self, messages):
         result = []
@@ -66,25 +35,15 @@ class ChatConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        message_json = {
-            'id': message.id,
-            'sender': message.sender.username,
-            'recipient': message.recipient.username,
-            'message': message.message,
-            'published': str(message.published),
+        return {
+            'author': message.author.username,
+            'content': message.content,
+            'timestamp': str(message.timestamp)
         }
-
-        if (message.img):
-            message_json['img'] = message.img.img.url
-        if (message.smile):
-            message_json['smile'] = message.smile.img.url
-            
-        return message_json
-            
 
     commands = {
         'fetch_messages': fetch_messages,
-        'new_message': new_message,
+        'new_message': new_message
     }
 
     def connect(self):
@@ -105,8 +64,9 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         data = json.loads(text_data)
         self.commands[data['command']](self, data)
+        
 
-    def send_chat_message(self, message):
+    def send_chat_message(self, message):    
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -121,4 +81,3 @@ class ChatConsumer(WebsocketConsumer):
     def chat_message(self, event):
         message = event['message']
         self.send(text_data=json.dumps(message))
-        

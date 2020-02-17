@@ -59,6 +59,7 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [('redis', 6379)],
+#             "hosts": [('127.0.0.1', 6379)],
         },
     },
 }
@@ -71,6 +72,8 @@ DATABASES = {
         'NAME': 'mf',
         'USER': 'admin',
         'PASSWORD': 'password',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
     }
 }
 

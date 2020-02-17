@@ -1,5 +1,5 @@
 from django.contrib import admin
-from chat.models import Message, MessageSmile
 
-admin.site.register(MessageSmile)
+from .models import Message
+
 admin.site.register(Message)

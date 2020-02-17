@@ -1,7 +1,7 @@
 from django.urls import path, re_path
-from chat.views import chat, upload_image
+from chat.views import index, room
 
 urlpatterns = [
-    path('chat/', chat, name='chat'),
-    path('chat/up_image/', upload_image, name='upload'),
+    path('index/', index, name='index'),
+    re_path(r'^chat/(?P<room_name>[^/]+)/$', room, name='room'),
 ]
