@@ -3,5 +3,5 @@ from chat.views import index, room
 
 urlpatterns = [
     path('index/', index, name='index'),
-    re_path(r'^chat/(?P<room_name>[^/]+)/$', room, name='room'),
+    path('chat/<int:id>/', room, name='room'),
 ]

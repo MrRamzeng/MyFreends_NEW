@@ -112,12 +112,12 @@
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 <script>
-    var roomName = {{ room_name_json }};
+    var roomId = {{ room_id }};
     var username = {{ username }};
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
-        '/ws/chat/' + roomName + '/');
+        '/ws/chat/' + roomId + '/');
 
     chatSocket.onopen = function(e) {
       fetchMessages();
@@ -151,7 +151,7 @@
             'command': 'new_message',
             'message': message,
             'from': username,
-            'room': roomName
+            'room': roomId
         }));
 
         messageInputDom.value = '';

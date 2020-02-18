@@ -11,17 +11,17 @@ def index(request):
     if request.method == 'POST':
         form = ChatForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data.get('name')
+            id = form.cleaned_data.get('id')
             print(name)
             form.save()
-            JsonResponse({'success': True, 'name': name})
+            JsonResponse({'success': True, 'id': id})
     else:
         form = ChatForm()
     return render(request, 'chat/index.html', {'form': form})
 
 @login_required
-def room(request, room_name):
+def room(request, id):
     return render(request, 'chat/room.html', {
-        'room_name_json': mark_safe(json.dumps(room_name)),
+        'room_id': mark_safe(json.dumps(id)),
         'username': mark_safe(json.dumps(request.user.username)),
     })
