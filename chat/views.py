@@ -12,7 +12,6 @@ def index(request):
         form = ChatForm(request.POST)
         if form.is_valid():
             id = form.cleaned_data.get('id')
-            print(name)
             form.save()
             JsonResponse({'success': True, 'id': id})
     else:
@@ -22,6 +21,6 @@ def index(request):
 @login_required
 def room(request, id):
     return render(request, 'chat/room.html', {
-        'room_id': mark_safe(json.dumps(id)),
-        'username': mark_safe(json.dumps(request.user.username)),
+        'chat_id': mark_safe(json.dumps(id)),
+        'id': mark_safe(json.dumps(request.user.id)),
     })

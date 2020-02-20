@@ -9,7 +9,7 @@ User = get_user_model()
 class ChatConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
-        messages = Message.objects.filter(chat=self.room_name)
+        messages = Message.objects.filter(chat=self.chat_id)
         content = {
             'command': 'messages',
             'messages': self.messages_to_json(messages)
@@ -18,13 +18,13 @@ class ChatConsumer(WebsocketConsumer):
 
     def new_message(self, data):
         author = data['from']
-        author_user = User.objects.filter(username=author)[0]
-        chat = data['room']
-        chat_name = Chat.objects.get(name=chat)
+        author_user = User.objects.filter(id=author)[0]
+        chat = data['chat']
+        chat_id = Chat.objects.get(id=chat)
         message = Message.objects.create(
             author=author_user, 
             content=data['message'],
-            chat=chat_name)
+            chat=chat_id)
         content = {
             'command': 'new_message',
             'message': self.message_to_json(message)
@@ -39,7 +39,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def message_to_json(self, message):
         return {
-            'author': message.author.username,
+            'author': message.author.id,
             'content': message.content,
             'timestamp': str(message.timestamp)
         }
@@ -50,8 +50,8 @@ class ChatConsumer(WebsocketConsumer):
     }
 
     def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.chat_id = self.scope['url_route']['kwargs']['chat_id']
+        self.room_group_name = 'chat_%s' % self.chat_id
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name

@@ -112,12 +112,12 @@
 <script src="{% static 'js/main.js' %}"></script>
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 <script>
-    var roomId = {{ room_id }};
-    var username = {{ username }};
+    var chatId = {{ chat_id }};
+    var id = {{ id }};
 
     var chatSocket = new ReconnectingWebSocket(
         'ws://' + window.location.host +
-        '/ws/chat/' + roomId + '/');
+        '/ws/chat/' + chatId + '/');
 
     chatSocket.onopen = function(e) {
       fetchMessages();
@@ -150,8 +150,8 @@
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
             'message': message,
-            'from': username,
-            'room': roomId
+            'from': id,
+            'chat': chatId
         }));
 
         messageInputDom.value = '';
@@ -169,7 +169,7 @@
       pTag.textContent = data.content;
       imgTag.src = 'http://emilcarlsson.se/assets/mikeross.png';
       
-      if (author === username) {
+      if (author === id) {
         msgListTag.className = 'sent';
       } else {
         msgListTag.className = 'replies';
