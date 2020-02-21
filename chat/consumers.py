@@ -6,6 +6,7 @@ from .models import Message, Chat
 
 User = get_user_model()
 
+
 class ChatConsumer(WebsocketConsumer):
 
     def fetch_messages(self, data):
@@ -17,14 +18,29 @@ class ChatConsumer(WebsocketConsumer):
         self.send_message(content)
 
     def new_message(self, data):
-        author = data['from']
-        author_user = User.objects.filter(id=author)[0]
+        user = data['from']
+        author = User.objects.filter(id=user)[0]
         chat = data['chat']
         chat_id = Chat.objects.get(id=chat)
-        message = Message.objects.create(
-            author=author_user, 
-            content=data['message'],
-            chat=chat_id)
+        if 'smileId' in data:
+            message = Message.objects.create(
+                author=author,
+                chat_id=chat,
+                smile_id=data['smileId']
+            )
+        elif 'imgId' in data:
+            message = Message.objects.create(
+                author=author,
+                chat_id=chat,
+                content=data['message'],
+                img_id=data['imgId']
+            )
+        else:
+            message = Message.objects.create(
+                author=author, 
+                content=data['message'],
+                chat_id=chat
+            )
         content = {
             'command': 'new_message',
             'message': self.message_to_json(message)
@@ -38,11 +54,17 @@ class ChatConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        return {
+        content_json = {
             'author': message.author.id,
+            'author_image': message.author.photo.url,
             'content': message.content,
             'timestamp': str(message.timestamp)
         }
+        if message.img:
+            content_json['img'] = message.img.img.url
+        if message.smile:
+            content_json['smile'] = message.smile.img.url
+        return content_json
 
     commands = {
         'fetch_messages': fetch_messages,

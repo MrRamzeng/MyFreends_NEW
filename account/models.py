@@ -17,13 +17,14 @@ class Account(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField('Имя', max_length=50)
     last_name = models.CharField('Фамилия', max_length=50)
     photo = models.ImageField(
-        'Фото', upload_to=user_photo, default='avatar.png')
+        'Фото', upload_to=user_photo, default='avatar.png'
+    )
     is_active = models.BooleanField(_("active"), default=False)
     is_staff = models.BooleanField(_("staff"), default=False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
     objects = CustomStaffManager()
-
+    
     class Meta:
         verbose_name = _("account")
         verbose_name_plural = _("accounts")
