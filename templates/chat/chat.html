@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Сообщения
+{% endblock title %}
+
+{% block content %}
+<div id="chat_container" class="card">
+    <div class="row">
+        <div id="chats_list" class="col">
+            <div class="row-section">
+                <a href="{% url 'my_profile' %}">
+                    <div class="col s3 center">
+                        <img class="circle" src="{{ request.user.photo.url }}">
+                    </div>
+
+                    <div class="col s7">
+                        <p>
+                            {{ request.user.first_name }} {{request.user.last_name }}
+                        </p>
+                    </div>
+
+                    <div class="col s2">
+                        <a id="accounts" class="material-icons">add</a>
+                    </div>
+                </a>
+            </div>
+            {% for chat in chats %}
+            <div id="recipient" class="section">
+                <div class="row">
+                    <a href="#{{ chat.id }}" class="active">
+                        <div id="{{ chat.id }}" class="flex-data">
+                                {% if chat.name %}
+                                <p>group {{ chat.name }}</p>
+                                {% else %}
+
+                                {% for user in chat.user_list.all %}
+
+                                {% if user.id != request.user.id %}
+                                <img id="{{user.username}}" class="circle online" src="{{ user.photo.url }}">
+                                <p id="{{user.username}}">
+                                    {{ user.first_name }} {{ user.last_name }}
+                                </p>
+                                {% endif %}
+
+                                {% endfor %}
+
+                                {% endif %}
+                            
+                        </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="accounts_list" class="col">
+            <a id="chats" class="material-icons">close</a>
+            <form id="chat_form" method="POST">
+                {% csrf_token %}
+                {{ form.name }}
+                {{ form.user_list }}
+                <button type="submit" id="chat_submit" class="btn waves-effect">
+                    <i class="material-icons" aria-hidden="true">send</i>
+                </button>
+            </form>
+        </div>
+
+        <div id="messagebox_container" class="col">
+            <div class="title">
+                <div id="current_user_data" class="col s12">
+                </div>
+            </div>
+
+            <div id="box" class="col s12">
+                <ul id="messages">
+                </ul>
+                <div class="message-input">
+                    <div class="row">
+                        <span id="preview_image"></span>
+                    </div>
+
+                    <div class="file-field">
+                        {% csrf_token %}
+                        <span class="material-icons">attach_file</span>
+                        <input id="chat_photo_input" type="file" accept="image/jpeg,image/png,image/gif">
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                        </div>
+                    </div>
+                    <input id="chat_message_input" type="text">
+                    <button id="message_submit" class="btn waves-effect">
+                        <i class="material-icons" aria-hidden="true">send</i>
+                    </button>
+                    <a class="dropdown-trigger material-icons" data-target="smile_list" aria-hidden="true"
+                        style="margin: 10px;">mood</a>
+                    <div id='smile_list' class='dropdown-content'>
+                        {% for smile in smiles %}
+                        <img id="{{ smile.id }}" src="{{ smile.img.url }}" style="margin: 5px;">
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .container {
+        width: 100%;
+        margin: 0;
+        max-width: 4320px;
+    }
+
+    body {
+        background: linear-gradient(120deg, rgba(101, 163, 228, 1) 0%, rgba(23, 88, 157, 1) 45%, rgba(12, 69, 162, 0.8) 70%, rgba(55, 29, 140, 0.9) 100%);
+    }
+</style>
+<script src="{% static 'js/main.js' %}"></script>
+
+<script src="{% static 'js/reconnecting-websocket.js' %}"></script>
+
+<script>
+    var id = "{{ request.user.id }}";
+</script>
+<script src="{% static 'js/chat-socket.js' %}"></script>
+
+{% endblock content %}
