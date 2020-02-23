@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/account_cards.css' %}">
+{% endblock css %}
+
+{% block title %}
+{% if request.user.username in request.path %}
+Мои Друзья {{ counter }}
+{% else %}
+Друзья {{ user.username }} {{ counter }}
+{% endif %}
+{% endblock title %}
+
+{% block content %}
+
+<div id="friends_container" class="row">
+    <div {% if not request.user.username in request.path %} class="col s9" {% endif %}>
+        <h5>
+            {% if request.user.username in request.path %}
+            Мои Друзья {{ counter }}
+            {% else %}
+            Друзья {{ user.first_name }} {{counter}}
+            {% endif %}
+        </h5>
+        {% for friend in friends %}
+        {% if not friend in blockers %}
+        <div class="col">
+            <div class="card">
+                <div class="card-image">
+                    <img src="{{ friend.photo.url }}">
+                </div>
+
+                <div class="card-content">
+                    <div>
+                        <a href="{% url 'view_account' username=friend.username %}">
+                            {{ firend.first_name }} {{ friend.last_name }}
+                        </a>
+                    </div>
+                    <a class="tooltipped btn waves-effect waves-teal" href="{% url 'chat' %}"
+                        {% if friend == request.user %} style="visibility: hidden" {% endif %} data-position="top"
+                        data-tooltip="Написать">
+                        <i class="material-icons">message</i>
+                    </a>
+                    {% if friend in my_friends %}
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'remove_friend' username=friend.username %}" data-posititon="top"
+                        data-tooltip="Удалить">
+                        del
+                    </a>
+                    {% elif friend in my_request_to_users %}
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'cancel_friend_request' username=friend.username %}" data-position="top"
+                        data-tooltip="Отменить">
+                        <i class="material-icons">close</i>
+                    </a>
+                    {% elif friend in my_request_from_users %}
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'accept_friend_request' username=friend.username %}" data-position="top"
+                        data-tooltip="Принять">
+                        <i class="material-icons">check</i>
+                    </a>
+
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'reject_friend_request' username=friend.username %}" data-position="top"
+                        data-tooltip="Отменить">
+                        <i class="material-icons">close</i>
+                    </a>
+
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'add_block' username=friend.username %}" data-position="top"
+                        data-tooltip="Заблокировать">
+                        <i class="material-icons">pan_tool</i>
+                    </a>
+                    {% elif friend in followers %}
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'remove_follower' username=friend.username %}" data-position="top"
+                        data-tooltip="Удалить">
+                        <i class="material-icons">close</i>
+                    </a>
+
+                    <a class="tooltipped btn waves-effect waves-teal"
+                        href="{% url 'accept_friend_request' username=friend.username %}" data-position="top"
+                        data-tooltip="Принять">
+                        <i class="material-icons">check</i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

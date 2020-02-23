@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/account_cards.css' %}">
+{% endblock css %}
+
+{% block title %}
+{% if request.user.username in request.path %}
+Мои подписчики {{ counter }}
+{% else %}
+Подписчики {{ user.username }} {{counter}}
+{% endif %}
+{% endblock title %}
+
+{% block content %}
+<div id="followers_container" class="row">
+  <div {% if not request.user.username in request.path %} class="col s9" {% endif %}>
+    <h5>
+
+      {% if request.user.username in request.path %}
+      Мои подписчики
+      {% else %}
+      Подписчики {{user.username }}
+      {% endif %}
+
+    </h5>
+    <div id="followers" class="account_card_container">
+
+      {% for follower in followers %}
+
+      {% if not follower in blockers and not follower in blockings %}
+      <div class="col s3">
+        <div class="card">
+          <div class="card-image">
+
+            {% if follower.photo %}
+            <img id="user-photo" src="{{ follower.photo.url }}">
+            {% elif follower.gender == "Male" %}
+            <img id="user-photo" src="{% static 'css/images/no_image_man.png' %}">
+            {% else %}
+            <img id="user-photo" src="{% static 'css/images/no_image_woman.png' %}">
+            {% endif %}
+
+            <span class="card-title">
+              {{ follower.first_name }} {{ follower.last_name }}
+
+              {% if follower.is_verified %}
+              <sup><i class="material-icons" style="color: yellowgreen">verified_user</i></sup>
+              {% endif %}
+
+            </span>
+          </div>
+
+          <div class="card-content">
+            <div style="margin: 10px 0;">
+              <a href="{% url 'view_account' username=follower.username %}">
+                > {{ follower.username }}
+              </a>
+            </div>
+
+            {% if follower != request.user %}
+            <a class="tooltipped btn waves-effect waves-teal" href="{% url 'chatroom' username=follower.username"
+                       {% if follower == request.user %} style=" display: none" {% endif %} data-position="top"
+              data-tooltip="Написать">
+              <i class="material-icons">message</i>
+            </a>
+
+            {% if request.user.username in request.path %}
+            <a class="tooltipped btn waves-effect waves-teal"
+              href="{% url 'remove_follower' username=follower.username %}" data-position="top"
+              data-tooltip="Удалить из подписчиков">
+              <i class="material-icons">close</i>
+            </a>
+            {% elif follower in my_request_to_user %}
+            <a class="tooltipped btn waves-effect waves-teal"
+              href="{% url 'cancel_friend_request' username=follower.username %}" data-position="top"
+              data-tooltip="Отменить">
+              <i class="material-icons">close</i>
+            </a>
+            {% elif follower in my_request_from_users %}
+            <a class="tooltipped btn waves-effect waves-teal"
+              href="{% url 'accept_friend_request' username=follower.username %}" data-position="top"
+              data-tooltip="Принять">
+              <i class="material-icons">check</i>
+            </a>
+            <a class="tooltipped btn waves-effect waves-teal"
+              href="{% url 'reject_friend_request' username=follower.username %}" data-position="top"
+              data-tooltip="Отменить">
+              <i class="material-icons">close</i>
+            </a>
+            <a class="tooltipped btn waves-effect waves-teal" href="{% url 'add_block' username=follower.username %}"
+              data-position="top" data-tooltip="Заблокировать">
+              <i class="material-icons">pan_tool</i>
+            </a>
+            {% elif follower in friends %}
+            <a class="tooltipped btn waves-effect waves-teal"
+              href="{% url 'remove_friend' username=follower.username %}" data-position="top" data-tooltip="Удалить">
+              <img id="person-delete" src="{% static 'css/custom_icons/person_delete.png' %}">
+            </a>
+            {% else %}
+            <a class="tooltipped btn waves-effect waves-teal" href="{% url 'add_friend' username=follower.username %}"
+              data-position="top" data-tooltip="Добавить в друзья">
+              <i class="material-icons">person_add</i>
+            </a>
+            {% endif %}
+
+            {% else %}
+            <a class="tooltipped btn waves-effect waves-teal" href="{% url 'unfollow' username=follower.username %}"
+              data-position="top" data-tooltip="Отписаться">
+              <i class="material-icons">unsubscribe</i>
+            </a>
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% endfor %}
+
+    </div>
+  </div>
+
+  {% if not request.user.username in request.path %}
+  <div id="back_to_user" class="col s3">
+    <a href="{% url 'view_account' username=user.username %}">
+      <table class="card">
+        <tr>
+          <td style="width: 80px;">
+            {% if user.photo %}
+            <img class="circle" style="width: 80px; height: 80px; object-fit: cover;" src="{{ user.photo.url }}">
+            {% elif user.gender == "Male" %}
+            <img class="circle" style="width: 80px; height: 80px; object-fit: cover;"
+              src="{% static 'css/images/no_image_man.png' %}">
+            {% else %}
+            <img class="circle" style="width: 80px; height: 80px; object-fit: cover;"
+              src="{% static 'css/images/no_image_woman.png' %}">
+            {% endif %}
+          </td>
+
+          <td>
+            <span class="helper-text">
+              Вернуться к странице<br>
+              {{ user.first_name }} {{ user.last_name }}
+            </span>
+          </td>
+        </tr>
+      </table>
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock content %}

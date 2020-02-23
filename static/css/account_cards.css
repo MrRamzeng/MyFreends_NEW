@@ -1,0 +1,30 @@
+#friends_container .card, #requests_container .card, #accounts_container .card {
+    width: 250px;
+}
+
+@media (max-width: 320px) {
+    #friends_container .card, #requests_container .card, #accounts_container .card {
+        width: 120px;
+    }
+    .card-content {
+        padding: 5px 10px !important;
+    }
+}
+
+@media (min-width: 321px) and (max-width: 375px) {
+    #friends_container .card, #requests_container .card, #accounts_container .card {
+        width: 145px;
+    }
+    .card-content {
+        padding: 10px 15px !important;
+    }
+}
+
+@media (min-width: 376px) and (max-width: 768px) {
+    #friends_container .card, #requests_container .card, #accounts_container .card {
+        width: 170px;
+    }
+    .card-content {
+        padding: 10px 20px !important;
+    }
+}

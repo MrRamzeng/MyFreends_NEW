@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% load static %}
+{% load friendshiptags %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/account_cards.css' %}">
+{% endblock css %}
+
+{% block title %}
+Друзья
+{% endblock title %}
+
+{% block content %}
+{% friends request.user %}
+
+{% if requests_from %}
+<div id="requests_container" class="row">
+    <h5>Отправленные заявки</h5>
+    {% for request_from in requests_from %}
+    <div class="col">
+        <div class="card">
+            <div class="card-image">
+                <img src="{{ request_from.to_user.photo.url }}">
+            </div>
+
+            <div class="card-content">
+                <a href="{% url 'view_account' username=request_from.to_user.username %}">
+                    {{ request_from.to_user.first_name }} {{ request_from.to_user.last_name }}
+                </a><br>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'cancel_friend_request' username=request_from.to_user.username %}" data-position="top"
+                    data-tooltip="Отменить">
+                    <i class="material-icons">close</i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if requests_to %}
+<div id="requests_container" class="row">
+    <h5>Хотят добавить вас в друзья</h5>
+    {% for request_to in requests_to %}
+    <div class="col">
+        <div class="card">
+            <div class="card-image">
+                <img src="{{ request_to.from_user.photo.url }}">
+            </div>
+
+            <div class="card-content">
+                <a href="{% url 'view_account' username=request_to.from_user.username %}">
+                    {{ request_to.from_user.first_name }} {{ request_to.from_user.last_name }}
+                </a><br>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'accept_friend_request' username=request_to.from_user.username %}"
+                    data-tooltip="Принять" data-position="top">
+                    <i class="material-icons">check</i>
+                </a>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'reject_friend_request' username=request_to.from_user.username %}" data-position="top"
+                    data-tooltip="Отклонить">
+                    <i class="material-icons">block</i>
+                </a>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'add_block' username=request_to.from_user.username %}" data-tooltip="Заблокировать"
+                    data-position="top">
+                    <i class="material-icons">pan_tool</i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div id="accounts_container" class="row">
+    <h5>Пользователи</h5>
+    {% for user in users %}
+    {% if user.is_active and not user in blockers and not user in blockings %}
+    <div class="col">
+        <div class="card">
+            <div class="card-image">
+                <img src="{{ user.photo.url }}">
+            </div>
+
+            <div class="card-content">
+                <a href="{% url 'view_account' username=user.username %}">
+                    {{ user.first_name }} {{ user.last_name }}
+                </a><br>
+                {% if user in following %}
+                <a class="tooltipped waves-effect waves-teal" href="{% url 'unfollow' username=user.username %}"
+                    data-position="top" data-tooltip="Отписаться">
+                    <i class="material-icons">unsubscribe</i>
+                </a>
+                {% elif user in followers %}
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'remove_follower' username=user.username %}" data-position="top"
+                    data-tooltip="Удалить из подписчиков">
+                    <i class="material-icons">close</i>
+                </a>
+                {% elif user in to_users %}
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'cancel_friend_request' username=user.username %}" data-position="top"
+                    data-tooltip="Отменить">
+                    <i class="material-icons">close</i>
+                </a>
+                {% elif user in from_users %}
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'accept_friend_request' username=user.username %}" data-position="top"
+                    data-tooltip="Принять">
+                    <i class="material-icons">check</i>
+                </a>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'reject_friend_request' username=user.username %}" data-position="top"
+                    data-tooltip="Отклонить">
+                    <i class="material-icons">block</i>
+                </a>
+
+                <a class="tooltipped waves-effect waves-teal" href="{% url 'add_block' username=user.username %}"
+                    data-position="top" data-tooltip="Заблокировать">
+                    <i class="material-icons">pan_tool</i>
+                </a>
+                {% elif user in friends %}
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'remove_friend' username=user.username %}" data-position="top" data-tooltip="Удалить">
+                    del
+                </a>
+                {% else %}
+                <a class="tooltipped waves-effect waves-teal" href="{% url 'add_friend' username=user.username %}"
+                    data-position="top" data-tooltip="Добавить в друзья">
+                    <i class="material-icons">person_add</i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock content %}

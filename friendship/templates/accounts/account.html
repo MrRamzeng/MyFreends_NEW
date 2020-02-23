@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/zoe.css' %}">
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock css %}
+
+{% block javascript %}
+
+{% endblock javascript %}
+
+{% block title %}
+{{ user.username }}
+{% endblock title %}
+
+{% block content %}
+<div id="user-container" class="card row">
+  <div class="col s12">
+    <div class="row">
+      <div class="col s4">
+        <div class="grid">
+          <figure class="effect-zoe">
+
+            {% if user.photo %}
+            <img src="{{ user.photo.url }}">
+            {% elif user.gender == "Male" %}
+            <img src="{% static 'css/images/no_image_man.png' %}">
+            {% else %}
+            <img src="{% static 'css/images/no_image_woman.png' %}">
+            {% endif %}
+
+            <figcaption>
+              <p>
+                <a href="#" class="btn waves-effect waves-teal">
+                  <i class="material-icons">thumb_up</i>
+                </a>
+              </p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="col s8">
+        <div class="card-content">
+          <span>
+            <h3 style="margin-top: 0;">
+              {{ user.first_name }} {{ user.last_name }}
+            </h3>
+          </span>
+          <blockquote>
+
+            {% if user.status %}
+            {{ user.status }}
+            {% else %}
+            Изменить статус
+            <style>
+              blockquote {
+                padding-left: 0;
+                border-left: none;
+                visibility: hidden;
+              }
+            </style>
+            {% endif %}
+
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col s12">
+    <div id="m-statistic-container" class="dropdown-trigger" data-target="dropdown1">
+      Подробнее
+      <i class="material-icons right">arrow_drop_down</i>
+      <ul id="dropdown1" class="dropdown-content">
+
+        {% if friend_counter != 0 %}
+        <li>
+          <a class="waves-effect waves-teal" href="{% url 'friends' username=user.username %}">
+            Друзья<span class="badge new" data-badge-caption="{{ friend_counter }}"></span>
+          </a>
+        </li>
+        {% endif %}
+
+        {% if follower_counter != 0 %}
+        <li>
+          <a class="waves-effect waves-teal" href="{% url 'followers' username=user.username %}">
+            Подписчики<span class="badge new" data-badge-caption="{{ follower_counter }}"></span>
+          </a>
+        </li>
+        {% endif %}
+
+        <li>
+          <a class="waves-effect waves-teal" href="#my_music">
+            Фото<span class="badge new" data-badge-caption="Скоро..."></span>
+          </a>
+        </li>
+
+        <li>
+          <a class="waves-effect waves-teal" href="#my_music">
+            Музыка<span class="badge new" data-badge-caption="Скоро..."></span>
+          </a>
+        </li>
+
+        <li>
+          <a class="waves-effect waves-teal" href="#my_music">
+            Видео<span class="badge new" data-badge-caption="Скоро..."></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<script>
+   $('.dropdown-trigger').dropdown();
+</script>
+
+<div class="card row">
+  <div class="carousel">
+    <a class="carousel-item" href="#one!"><img src="{% static '1.jpg'%}"></a>
+    <a class="carousel-item" href="#two!"><img src="{% static '2.jpg'%}"></a>
+    <a class="carousel-item" href="#three!"><img src="{% static '3.jpg'%}"></a>
+    <a class="carousel-item" href="#four!"><img src="{% static '4.jpg'%}"></a>
+    <a class="carousel-item" href="#five!"><img src="{% static '5.jpg'%}"></a>
+  </div>
+</div>
+
+<div id="statistic-container" class="card row">
+  <div class="col s12">
+    <div class="user-statistics">
+
+      {% if friend_counter != 0 %}
+      <a class="waves-effect waves-teal card" href="{% url 'friends' username=user.username %}">
+        <div id="user-friends">
+          <div class="card-image">
+            <span class="badge new" data-badge-caption="{{ friend_counter }}"></span>
+            <i class="material-icons">person</i>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card-content">Друзья</div>
+        </div>
+      </a>
+      {% endif %}
+
+      {% if follower_counter != 0 %}
+      <a class="waves-effect waves-teal card" href="{% url 'followers' username=user.username %}">
+        <div id="user-followers">
+          <div class="card-image">
+            <span class="badge new" data-badge-caption="{{ follower_counter }}"></span>
+            <i class="material-icons">people</i>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="card-content">Подписчики</div>
+        </div>
+      </a>
+      {% endif %}
+
+      <a class="waves-effect waves-teal card" href="#photo">
+        <div id="user-photo-library">
+          <div class="card-image">
+            <span class="badge new" data-badge-caption="Скоро..."></span>
+            <i class="material-icons">photo_library</i>
+          </div>
+
+          <div class="divider"></div>
+          <div class="card-content">Фото</div>
+        </div>
+      </a>
+
+      <a class="waves-effect waves-teal card" href="#music">
+        <div id="user-music-library">
+          <div class="card-image">
+            <span class="badge new" data-badge-caption="Скоро..."></span>
+            <i class="material-icons">library_music</i>
+          </div>
+
+          <div class="divider"></div>
+          <div class="card-content">Музыка</div>
+        </div>
+      </a>
+
+      <a class="waves-effect waves-teal card" href="#video">
+        <div id="user-video-library">
+          <div class="card-image">
+            <span class="badge new" data-badge-caption="Скоро..."></span>
+            <i class="material-icons">video_library</i>
+          </div>
+
+          <div class="divider"></div>
+          <div class="card-content">Видео</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% for post in posts %}
+<div id="post-container" class="card row">
+  <div class="col s12">
+    <div class="row">
+      <div id="post-user-image-container" class="col s1" style="padding-right: 0">
+
+        {% if post.user.photo %}
+        <img class="circle" src="{{ post.user.photo.url }}">
+        {% elif post.user.gender == "Male" %}
+        <img class="circle" src="{% static 'css/images/no_image_man.png' %}">
+        {% else %}
+        <img class="circle" src="{% static 'css/images/no_image_woman.png' %}">
+        {% endif %}
+        
+      </div>
+
+      <div class="col s10">
+        <h6>{{ post.user.first_name }} {{ post.user.last_name }}</h6>
+        {{ post.published }}
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p>{{ post.content|safe }}</p>
+  </div>
+</div>
+{% endfor %}
+{% endblock content %}

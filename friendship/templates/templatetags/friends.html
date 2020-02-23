@@ -1,0 +1,32 @@
+{% if friends %}
+<div id="friends_container" class="row">
+    <h5>Друзья {{ friends_count }}</h5>
+    {% for friend in friends %}
+    <div class="col">
+        <div class="card">
+            <div class="card-image">
+                <img src="{{ friend.photo.url }}">
+            </div>
+
+            <div class="card-content">
+                <a href="{% url 'view_account' username=friend.username %}">
+                    {{ friend.first_name }} {{ friend.last_name }}
+                </a><br>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'chat' %}" data-position="top"
+                    data-tooltip="Написать">
+                    <i class="material-icons">message</i>
+                </a>
+
+                <a class="tooltipped waves-effect waves-teal"
+                    href="{% url 'remove_friend' username=friend.username %}" data-position="top"
+                    data-tooltip="Удалить">
+                    del
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

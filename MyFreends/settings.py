@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     'account',
     'channels',
     'chat',
+    'friendship',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
