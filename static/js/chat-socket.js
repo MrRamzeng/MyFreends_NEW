@@ -56,23 +56,34 @@ $.ajaxSetup({
     }
 });
 
+var chat_id;
+
 // send message or image
+function sendMessage(chatSocket, imgId) {
+    var messageInputDom = document.querySelector('#chat_message_input');
+    var message = messageInputDom.value;
+    if (document.querySelector('#chat_message_input').value != '' || document.querySelector('#chat_photo_input').value != '') {
+        chatSocket.send(JSON.stringify({
+            'command': 'new_message',
+            'message': message,
+            'chat': chat_id,
+            'author': accountId,
+            'imgId': imgId,
+        }));
+    }
+    messageInputDom.value = '';
+    $('#chat_photo_input').val('');
+    $('#messagebox_container #preview_image').empty();
+}
+
 function displayingMessage() {
-    function sendMessage(chatSocket, imgId) {
-        var messageInputDom = document.querySelector('#chat_message_input');
-        var message = messageInputDom.value;
-        if (document.querySelector('#chat_message_input').value != '' || document.querySelector('#chat_photo_input').value != '') {
-            chatSocket.send(JSON.stringify({
-                'command': 'new_message',
-                'message': message,
-                'chat': chatId,
-                'from': id,
-                'imgId': imgId,
-            }));
-        }
-        messageInputDom.value = '';
-        $('#chat_photo_input').val('');
-        $('#messagebox_container #preview_image').empty();
+    var chatSocket = new ReconnectingWebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + chat_id + '/'
+    );
+
+    chatSocket.onopen = function (e) {
+        fetchMessages();
     }
 
     // send smile image
@@ -80,22 +91,11 @@ function displayingMessage() {
         var smile = e.target.id;
         chatSocket.send(JSON.stringify({
             'command': 'new_message',
-            'chat': chatId,
-            'from': id,
+            'chat': chat_id,
+            'author': accountId,
             'smileId': smile,
         }));
     };
-
-    var chatId = chat_id;
-
-    var chatSocket = new ReconnectingWebSocket(
-        'ws://' + window.location.host +
-        '/ws/chat/' + chatId + '/'
-    );
-
-    chatSocket.onopen = function (e) {
-        fetchMessages();
-    }
 
     chatSocket.onmessage = function (e) {
         var data = JSON.parse(e.data);
@@ -109,7 +109,7 @@ function displayingMessage() {
     };
 
     chatSocket.onclose = function (e) {
-        console.error('Chat socket closed unexpectedly');
+        $('#messages').empty();
     };
 
     document.querySelector('#chat_message_input').onkeyup = function (e) {
@@ -119,6 +119,7 @@ function displayingMessage() {
     };
 
     document.querySelector('#message_submit').onclick = function (e) {
+        $('#messages').scrollTop(9999)
         e.stopPropagation();
         e.preventDefault()
         var files = $('#chat_photo_input')[0].files[0]
@@ -126,7 +127,7 @@ function displayingMessage() {
             var fd = new FormData();
             fd.append('img', files);
             $.ajax({
-                url: "{% url 'upload' %}",
+                url: uploadImageUrl,
                 type: "POST",
                 cache: false,
                 processData: false,
@@ -139,6 +140,9 @@ function displayingMessage() {
         } else {
             sendMessage(chatSocket);
         }
+        $( document ).ready(function() {
+            $('#messages').scrollTop(9999)
+        });
     };
 
     function fetchMessages() {
@@ -168,7 +172,7 @@ function displayingMessage() {
             file.setAttribute('class', 'smile')
             pTag.appendChild(file)
         }
-        if (author === id) {
+        if (author == accountId) {
             msgListTag.className = 'sent';
         } else {
             msgListTag.className = 'replies';
@@ -177,7 +181,9 @@ function displayingMessage() {
         msgListTag.appendChild(imgTag);
         msgListTag.appendChild(pTag);
         document.querySelector('#messages').appendChild(msgListTag);
-        $('#messages').scrollTop(9999)
+        $( document ).ready(function() {
+            $('#messages').scrollTop(9999)
+        });
     }
 }
 
@@ -189,10 +195,6 @@ function displayingForm() {
     $('#current_user_data').empty()
     $('#' + chat_id).clone().appendTo("#current_user_data")
     $('#box, .title').show()
-    hash = $('#' + chat_id).parent('a').attr('href')
-    if (hash === window.location.hash) {
-        chat_id = hash
-    }
     displayingMessage()
 }
 
@@ -206,18 +208,37 @@ function selectingForm() {
     });
 }
 
+function visibleList() {
+    if (window.outerWidth < 768) {
+        $('#user_list').show()
+        $('#messagebox_container').hide()
+    }
+}
+
+function visibleMessageBox() {
+    if (window.outerWidth < 768) {
+        $('#user_list').hide()
+        $('#messagebox_container').show()
+    }
+}
 
 $(window).bind('hashchange', function () {
     if (window.location.hash != '') {
         $('#box, .title').show()
+        visibleMessageBox()
     } else {
         $('.title, #box').hide()
-    }
+        visibleList()
+    } 
 });
 
 if (window.location.hash != '') {
-    chat_id = (hash.slice(1))
+    chat_id = (hash.slice(-1))
+    console.log(accountId)
     displayingForm()
+    selectingForm()
+    visibleMessageBox()
 } else {
     selectingForm()
+    visibleList()
 }

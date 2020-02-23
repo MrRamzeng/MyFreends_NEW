@@ -18,7 +18,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send_message(content)
 
     def new_message(self, data):
-        user = data['from']
+        user = data['author']
         author = User.objects.filter(id=user)[0]
         chat = data['chat']
         chat_id = Chat.objects.get(id=chat)

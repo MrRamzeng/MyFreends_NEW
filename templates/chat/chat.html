@@ -31,29 +31,29 @@
                 <div class="row">
                     <a href="#{{ chat.id }}" class="active">
                         <div id="{{ chat.id }}" class="flex-data">
-                                {% if chat.name %}
-                                <p>group {{ chat.name }}</p>
-                                {% else %}
+                            {% if chat.name %}
+                            <p id="{{ chat.id }}">group {{ chat.name }}</p>
+                            {% else %}
 
-                                {% for user in chat.user_list.all %}
+                            {% for user in chat.user_list.all %}
 
-                                {% if user.id != request.user.id %}
-                                <img id="{{user.username}}" class="circle online" src="{{ user.photo.url }}">
-                                <p id="{{user.username}}">
-                                    {{ user.first_name }} {{ user.last_name }}
-                                </p>
-                                {% endif %}
+                            {% if user.id != request.user.id %}
+                            <img id="{{ chat.id }}" class="circle online" src="{{ user.photo.url }}">
+                            <p id="{{ chat.id }}">
+                                {{ user.first_name }} {{ user.last_name }}
+                            </p>
+                            {% endif %}
 
-                                {% endfor %}
+                            {% endfor %}
 
-                                {% endif %}
-                            
+                            {% endif %}
                         </div>
                     </a>
                 </div>
             </div>
             {% endfor %}
         </div>
+
         <div id="accounts_list" class="col">
             <a id="chats" class="material-icons">close</a>
             <form id="chat_form" method="POST">
@@ -115,12 +115,11 @@
         background: linear-gradient(120deg, rgba(101, 163, 228, 1) 0%, rgba(23, 88, 157, 1) 45%, rgba(12, 69, 162, 0.8) 70%, rgba(55, 29, 140, 0.9) 100%);
     }
 </style>
-<script src="{% static 'js/main.js' %}"></script>
-
 <script src="{% static 'js/reconnecting-websocket.js' %}"></script>
 
 <script>
-    var id = "{{ request.user.id }}";
+    var accountId = "{{ request.user.id }}";
+    var uploadImageUrl = "{% url 'upload' %}";
 </script>
 <script src="{% static 'js/chat-socket.js' %}"></script>
 
