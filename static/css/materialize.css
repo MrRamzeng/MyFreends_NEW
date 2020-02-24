@@ -2605,7 +2605,7 @@ small {
     transition: -webkit-box-shadow .25s;
     transition: box-shadow .25s;
     transition: box-shadow .25s, -webkit-box-shadow .25s;
-    border-radius: 2px;
+    border-radius: 10px;
 }
 
 .card .card-title {
@@ -2720,7 +2720,7 @@ small {
 
 .card .card-image img {
     display: block;
-    border-radius: 2px 2px 0 0;
+    border-radius: 10px 10px 0 0;
     position: relative;
     left: 0;
     right: 0;

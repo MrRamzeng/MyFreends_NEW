@@ -324,7 +324,7 @@
 }
 
 @media (max-width: 767px) {
-    #user_list, #messagebox_container {
+    #chats_list, #messagebox_container {
         width: 100%;
         display: none;
     }

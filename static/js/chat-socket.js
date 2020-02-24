@@ -119,7 +119,6 @@ function displayingMessage() {
     };
 
     document.querySelector('#message_submit').onclick = function (e) {
-        $('#messages').scrollTop(9999)
         e.stopPropagation();
         e.preventDefault()
         var files = $('#chat_photo_input')[0].files[0]
@@ -210,14 +209,14 @@ function selectingForm() {
 
 function visibleList() {
     if (window.outerWidth < 768) {
-        $('#user_list').show()
+        $('#chats_list').show()
         $('#messagebox_container').hide()
     }
 }
 
 function visibleMessageBox() {
     if (window.outerWidth < 768) {
-        $('#user_list').hide()
+        $('#chats_list').hide()
         $('#messagebox_container').show()
     }
 }
