@@ -17,8 +17,10 @@ def chat(request):
     if request.method == 'POST':
         form = ChatForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('chat')
+            chat = form.save()
+            return render(request, 'chat/chat-list-item.html', {
+                'chat': chat
+            })
     else:
         form = ChatForm()
     return render(request, 'chat/chat.html', {
