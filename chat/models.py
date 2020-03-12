@@ -6,7 +6,7 @@ User = get_user_model()
 
 class Chat(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
-    user_list = models.ManyToManyField(User)
+    user_list = models.ManyToManyField(User, related_name='users')
 
     def __str__(self):
         users = ", ".join(str(user_data) for user_data in self.user_list.all())

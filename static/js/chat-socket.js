@@ -233,7 +233,6 @@ $(window).bind('hashchange', function () {
 
 if (window.location.hash != '') {
     chat_id = (hash.slice(-1))
-    console.log(accountId)
     displayingForm()
     selectingForm()
     visibleMessageBox()

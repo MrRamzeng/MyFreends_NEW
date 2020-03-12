@@ -11,7 +11,6 @@ from chat.forms import ChatForm
 
 @login_required(login_url='signin')
 def chat(request):
-    accounts = Account.objects.all()
     chats = Chat.objects.filter(user_list=request.user)
     smiles = MessageSmile.objects.all()
     if request.method == 'POST':
@@ -22,9 +21,9 @@ def chat(request):
                 'chat': chat
             })
     else:
-        form = ChatForm()
+        form = ChatForm(initial={'user_list': request.user})
     return render(request, 'chat/chat.html', {
-        'chats': chats, 'accounts': accounts, 'form': form, 'smiles': smiles
+        'chats': chats, 'form': form, 'smiles': smiles
     })
 
 

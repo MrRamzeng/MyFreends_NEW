@@ -1,5 +1,8 @@
 import os
 
+import django
+django.__path__[0] + ''
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = 'g6l)2(vhpsn+1_mc(^jxn8&9@av2e0fmr4r#k2rg8y1szsrn3a'
@@ -15,6 +18,7 @@ INSTALLED_APPS = [
     'channels',
     'chat',
     'friendship',
+    'django.forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -22,6 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles'
 ]
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -59,22 +65,22 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('redis', 6379)],
-            # "hosts": [('127.0.0.1', 6379)],
+            # "hosts": [('redis', 6379)],
+            "hosts": [('127.0.0.1', 6379)],
         },
     },
 }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'postgre',
-        'PORT': 5432,
-        'NAME': 'mf',
-        'USER': 'admin',
-        'PASSWORD': 'password',
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'HOST': 'postgre',
+        # 'PORT': 5432,
+        # 'NAME': 'mf',
+        # 'USER': 'admin',
+        # 'PASSWORD': 'password',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
     }
 }
 

@@ -27,7 +27,7 @@
                 </a>
             </div>
             {% for chat in chats %}
-                {% include "chat/chat-list-item.html" %}
+            {% include "chat/chat-list-item.html" %}
             {% endfor %}
         </div>
 
@@ -97,10 +97,11 @@
 <script>
     var accountId = "{{ request.user.id }}";
     var uploadImageUrl = "{% url 'upload' %}";
-    $(document).ready(function(){
-        $('#chat_submit').click(function(e) {
+    $('input:checked').closest("p").hide()
+    $(document).ready(function () {
+        $('#chat_submit').click(function (e) {
             e.preventDefault();
-            $.post('/chat/', $('form').serialize()).done(function(data){
+            $.post('/chat/', $('form').serialize()).done(function (data) {
                 $('#chats_list').append(data);
                 $('#accounts_list').hide()
                 $('#chats_list').show()
