@@ -4,8 +4,15 @@ from django.db import models
 User = get_user_model()
 
 
+def chat_photo(instance, filename):
+    return "%s/photo/%s" % (instance.chat.name, filename)
+
+
 class Chat(models.Model):
     name = models.CharField(max_length=50, blank=True, null=True)
+    image = models.ImageField(
+        'Фото', upload_to=chat_photo, default='group_avatar.png', blank=True, null=True
+    )
     user_list = models.ManyToManyField(User, related_name='users')
 
     def __str__(self):

@@ -29,9 +29,6 @@ class Account(AbstractBaseUser, PermissionsMixin):
         verbose_name = _("account")
         verbose_name_plural = _("accounts")
 
-    def __str__(self):
-        return (str(self.first_name) + ' ' + str(self.last_name))
-
 
 @receiver(post_save, sender=User)
 def create_account(sender, instance, created, **kwargs):

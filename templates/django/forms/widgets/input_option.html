@@ -1,6 +1,6 @@
 {% if widget.wrap_label %}
 <label {% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %}>
     {% include "django/forms/widgets/check_input.html" %}
-    <span>{{ widget.label }}</span>
+    <span>{{ widget.label|safe }}</span>
 </label>
 {% endif %}

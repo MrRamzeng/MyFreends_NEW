@@ -1,7 +1,7 @@
 {% with id=widget.attrs.id %}
   {% for group, options, index in widget.optgroups %}
   {% for option in options %}
-  <p>{% include option.template_name with widget=option %}</p>
+  <p style="margin: 0">{% include option.template_name with widget=option %}</p>
   {% endfor %}
   {% endfor %}
 {% endwith %}

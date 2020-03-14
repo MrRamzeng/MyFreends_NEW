@@ -56,8 +56,6 @@ $.ajaxSetup({
     }
 });
 
-var chat_id;
-
 // send message or image
 function sendMessage(chatSocket, imgId) {
     var messageInputDom = document.querySelector('#chat_message_input');
@@ -232,10 +230,10 @@ $(window).bind('hashchange', function () {
 });
 
 if (window.location.hash != '') {
-    chat_id = (hash.slice(-1))
+    chat_id = (hash.slice(1))
+    visibleMessageBox()
     displayingForm()
     selectingForm()
-    visibleMessageBox()
 } else {
     selectingForm()
     visibleList()

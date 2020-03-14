@@ -4,7 +4,8 @@
         <a href="#{{ chat.id }}" class="active">
             <div id="{{ chat.id }}" class="flex-data">
                 {% if chat.name %}
-                <p id="{{ chat.id }}">group {{ chat.name }}</p>
+                <img id="{{ chat.id }}" src="{{ chat.image.url }}" class="circle online" alt="">
+                <p id="{{ chat.id }}">{{ chat.name }}</p>
                 {% else %}
 
                 {% for user in chat.user_list.all %}
