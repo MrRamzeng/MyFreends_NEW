@@ -120,6 +120,18 @@
     padding: 0;
     width: calc(100vw - 320px);
     border-left: solid 1px #9e9e9e;
+    opacity: 0; /*Элемент полностью прозрачный (невидимый)*/
+    animation: show 0.7s 1; /* Указываем название анимации, её время и количество повторов*/
+    animation-fill-mode: forwards; /* Чтобы элемент оставался в конечном состоянии анимации */
+}
+
+@keyframes show{
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
 }
 
 #messagebox_container .title {
@@ -151,18 +163,6 @@
     margin: 5px 10px;
     width: calc(100% - 20px);
     font-size: 0.9em;
-    opacity: 0; /*Элемент полностью прозрачный (невидимый)*/
-    animation: show 0.7s 1; /* Указываем название анимации, её время и количество повторов*/
-    animation-fill-mode: forwards; /* Чтобы элемент оставался в конечном состоянии анимации */
-}
-
-@keyframes show{
-    0% {
-        opacity:0;
-    }
-    100% {
-        opacity:1;
-    }
 }
 
 #messages li.sent>img {
