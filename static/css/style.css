@@ -120,9 +120,6 @@
     padding: 0;
     width: calc(100vw - 320px);
     border-left: solid 1px #9e9e9e;
-    opacity: 0; /*Элемент полностью прозрачный (невидимый)*/
-    animation: show 0.7s 1; /* Указываем название анимации, её время и количество повторов*/
-    animation-fill-mode: forwards; /* Чтобы элемент оставался в конечном состоянии анимации */
 }
 
 @keyframes show{
@@ -139,6 +136,9 @@
     height: 60px;
     padding: 5px 0;
     border-bottom: 1px solid #9e9e9e;
+    opacity: 0; /*Элемент полностью прозрачный*/
+    animation: show 1s 1; /* Указываем название анимации, её время и количество повторов*/
+    animation-fill-mode: forwards; /* Чтобы элемент оставался в конечном состоянии анимации */
 }
 
 #chat_container, #chats_list, #messagebox_container, #accounts_list {
@@ -151,6 +151,9 @@
     overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: #435f7a #9e9e9e;
+    opacity: 0;
+    animation: show 1s 1;
+    animation-fill-mode: forwards;
 }
 
 .online {
