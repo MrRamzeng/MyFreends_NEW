@@ -104,10 +104,18 @@
     $('input:checked').closest("p").hide()
     $(document).ready(function () {
         $('#id_name').keyup(function () {
-            if ($(this).val().length === 0) {
+            if ($('#id_name').val().length === 0) {
                 $('#chat_submit').attr('disabled', true);
             } else {
                 $('#chat_submit').attr('disabled', false);
+            }
+        })
+        $('#chat_submit').attr('disabled', true);
+        $('#id_name').keyup(function () {
+            if ($(this).val().length != 0) {
+                $('#chat_submit').attr('disabled', false);
+            } else {
+                $('#chat_submit').attr('disabled', true);
             }
         })
         $('#chat_submit').click(function (e) {
